@@ -27,7 +27,7 @@ import fi.vm.kapa.xml.rova.api.delegate.PrincipalType;
 import java.util.List;
 
 /**
- * Client interface for fetching information required when when working on behalf of an other person.
+ * Client interface for fetching information required when working on behalf of an other person.
  */
 public interface HpaClient {
     /**

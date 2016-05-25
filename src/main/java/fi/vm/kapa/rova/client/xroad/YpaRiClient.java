@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Client implementation for fetching information required when when working on behalf of a company.
+ * Client implementation for fetching information required when working on behalf of a company.
  */
 public class YpaRiClient extends AbstractRiClient implements YpaClient {
 
