@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+  <HEAD>
+    <TITLE>API Overview</TITLE>
+  </HEAD>
+  <BODY>
+
+<H3>roles-auths-client library usage example</H3>
+
+Please notice that Java 8 or higher is required.
+
+<HR/>
+
+<PRE>
+    Properties props = new Properties();
+    props.load(new FileInputStream("application.properties"));
+
+    XRoadClientConfig config = new XRoadClientConfig(
+        new ClientHeaderDetails(props),
+        new ServiceHeaderDetails(props),
+        (String) props.get("client_id"),
+        new HashSet<>(Arrays.asList(new XRoadServer[] {
+                new XRoadServer((String) props.get("xroad_host1")),
+                new XRoadServer((String) props.get("xroad_host2"))
+        })));
+
+    ClientFactory cf = new RiClientFactory(config);
+
+    HpaClient hc = cf.hpaClient();
+
+    boolean auth = hc.getAuthorization(delegateId, principalId, null);
+</PRE>
+
+<HR/>
+
+HeaderDetails classes contain information about the properties that needs to be set.
+
+@see fi.vm.kapa.rova.client.xroad.ClientHeaderDetails ClientHeaderDetails
+@see fi.vm.kapa.rova.client.xroad.ServiceHeaderDetails ServiceHeaderDetails
+
+  </BODY>
+</HTML>

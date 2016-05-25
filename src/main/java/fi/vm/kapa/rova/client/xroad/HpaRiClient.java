@@ -1,0 +1,97 @@
+/**
+ * The MIT License
+ * Copyright (c) 2016 Population Register Centre
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package fi.vm.kapa.rova.client.xroad;
+
+import fi.vm.kapa.rova.client.*;
+import fi.vm.kapa.rova.client.common.EndPoint;
+import fi.vm.kapa.rova.client.common.RovaServiceDetails;
+import fi.vm.kapa.rova.client.common.RovaServices;
+import fi.vm.kapa.rova.client.common.Server;
+import fi.vm.kapa.xml.rova.api.authorization.*;
+
+import javax.xml.bind.JAXBElement;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Holder;
+import javax.xml.ws.handler.HandlerResolver;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Client implementation for querying possibilities to operate on behalf of another person.
+ */
+public class HpaRiClient extends AbstractRiClient implements HpaClient {
+
+    private RovaAuthorizationService_Service rovaAuthorizationService = new RovaAuthorizationService_Service();
+
+    private ObjectFactory factory = new ObjectFactory();
+
+    public HpaRiClient(XRoadClientConfig config) {
+        RovaServiceDetails details = RovaServices.getDetails(RovaServices.RovaService.AUTHORIZATION.name());
+        for (Server server : config.getServers()) {
+            endPoints.add(new EndPoint(server, details.getPath()));
+        }
+        HandlerResolver hs = createHandlerResolver(config, details);
+        rovaAuthorizationService.setHandlerResolver(hs);
+    }
+
+    public boolean getAuthorization(String delegateId, String principalId, String issue) {
+        if (delegateId == null || principalId == null) {
+            throw new IllegalArgumentException("null value in required argument.");
+        }
+
+        boolean result = false;
+
+        RovaAuthorizationPortType port = rovaAuthorizationService.getRovaAuthorizationPort();
+        BindingProvider bp = (BindingProvider) port;
+        bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getNextEndpoint());
+
+        Holder<Request> request = new Holder<>(factory.createRequest());
+        Holder<RovaAuthorizationResponse> response = new Holder<>(factory.createRovaAuthorizationResponse());
+        request.value.setDelegateIdentifier(delegateId);
+        request.value.getIssue().add(issue);
+        request.value.setPrincipalIdentifier(principalId);
+
+        port.rovaAuthorizationService(request, response);
+
+        AuthorizationType authResult = null;
+        if (response.value != null) {
+            authResult = response.value.getAuthorization();
+        }
+
+        if (authResult == AuthorizationType.ALLOWED) {
+            result = true;
+        } else if (authResult != AuthorizationType.DISALLOWED) {
+            if (response.value != null) {
+                JAXBElement<String> message = response.value.getExceptionMessage();
+                if (message != null) {
+                    throw new ClientException("Unexpected response from server: " + message.getValue());
+                }
+            }
+        }
+        return result;
+    }
+
+
+
+
+}
