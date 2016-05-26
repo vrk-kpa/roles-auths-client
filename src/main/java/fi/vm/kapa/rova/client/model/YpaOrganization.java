@@ -26,35 +26,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Model object for Ypa responses.
+ * Model object for Ypa organization role responses.
  */
 public class YpaOrganization {
 
-        private String name;
-        private String identifier;
-        private List<String> roles = new ArrayList<String>();
+    private String name;
+    private String identifier;
+    private List<String> roles = new ArrayList<String>();
 
-        public String getName() {
+    /**
+     * @return name of the organization.
+     */
+    public String getName() {
             return name;
         }
 
-        public void setName(String name) {
+    public void setName(String name) {
             this.name = name;
         }
 
-        public String getIdentifier() {
+    /**
+     * @return organization identifier (Y-tunnus).
+     */
+    public String getIdentifier() {
             return identifier;
         }
 
-        public void setIdentifier(String identifier) {
+    public void setIdentifier(String identifier) {
             this.identifier = identifier;
         }
 
-        public List<String> getRoles() {
+    /**
+     * @return Roles for the person in the organization, for example TJ, TIL, ELI, S, IS or NIMKO.
+     */
+    public List<String> getRoles() {
             return roles;
         }
 
-        public void setRoles(List<String> roles) {
-            this.roles = roles;
-        }
+    public void setRoles(List<String> roles) { this.roles = roles; }
 }
