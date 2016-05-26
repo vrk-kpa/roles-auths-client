@@ -54,8 +54,8 @@ public class HpaRiClient extends AbstractRiClient implements HpaClient {
         rovaAuthorizationService.setHandlerResolver(hs);
     }
 
-    public boolean getAuthorization(String delegateId, String principalId, String issue) {
-        if (delegateId == null || principalId == null) {
+    public boolean isAuthorized(String userId, String delegateId, String principalId, String issue) {
+        if (userId == null || delegateId == null || principalId == null) {
             throw new IllegalArgumentException("null value in required argument.");
         }
 
@@ -70,6 +70,7 @@ public class HpaRiClient extends AbstractRiClient implements HpaClient {
         request.value.setDelegateIdentifier(delegateId);
         request.value.getIssue().add(issue);
         request.value.setPrincipalIdentifier(principalId);
+        headerHandler.setUserId(userId);
 
         port.rovaAuthorizationService(request, response);
 

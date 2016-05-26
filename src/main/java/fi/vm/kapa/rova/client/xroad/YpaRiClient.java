@@ -55,12 +55,12 @@ public class YpaRiClient extends AbstractRiClient implements YpaClient {
         rovaRolesService.setHandlerResolver(hs);
     }
 
-    public List<YpaOrganization> getRoles(String delegateId) {
-        if (delegateId == null) {
+    public List<YpaOrganization> getRoles(String userId, String delegateId) {
+        if (userId == null || delegateId == null) {
             throw new IllegalArgumentException("null value in required argument.");
         }
 
-        OrganizationListType organizationListType = getOrganizationalRoles(delegateId);
+        OrganizationListType organizationListType = getOrganizationalRoles(userId, delegateId);
 
         List<YpaOrganization> responseList = new ArrayList<>();
         if (organizationListType != null && organizationListType.getOrganization() != null) {
@@ -84,7 +84,7 @@ public class YpaRiClient extends AbstractRiClient implements YpaClient {
     }
 
 
-    private OrganizationListType getOrganizationalRoles(String delegateId) {
+    private OrganizationListType getOrganizationalRoles(String userId, String delegateId) {
         OrganizationListType result = null;
 
         RovaOrganizationalRolesPortType port = rovaRolesService.getRovaOrganizationalRolesPort();
@@ -94,6 +94,7 @@ public class YpaRiClient extends AbstractRiClient implements YpaClient {
         Holder<Request> request = new Holder<>(factory.createRequest());
         Holder<Response> response = new Holder<>(factory.createResponse());
         request.value.setDelegateIdentifier(delegateId);
+        headerHandler.setUserId(userId);
 
         port.rovaOrganizationalRolesService(request, response);
         if (response.value != null) {

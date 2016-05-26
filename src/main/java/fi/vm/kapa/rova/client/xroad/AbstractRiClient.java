@@ -38,13 +38,15 @@ public abstract class AbstractRiClient {
 
     protected ArrayList<EndPoint> endPoints = new ArrayList<>();
 
+    protected HeaderHandler headerHandler;
+
     private int endPointIndex = 0;
 
     protected AbstractRiClient() {
     }
 
     protected HandlerResolver createHandlerResolver(XRoadClientConfig config, RovaServiceDetails details) {
-        final HeaderHandler headerHandler = new HeaderHandler(config, details);
+        headerHandler = new HeaderHandler(config, details);
         return new HandlerResolver() {
             @Override
             public List<Handler> getHandlerChain(PortInfo portInfo) {

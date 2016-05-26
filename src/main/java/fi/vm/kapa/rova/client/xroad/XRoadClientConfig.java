@@ -31,7 +31,6 @@ public class XRoadClientConfig {
 
     private HeaderDetails clientDetails;
     private HeaderDetails serviceDetails;
-    private String clientId;
     private Set<XRoadServer> servers;
     private RequestIdGenerator requestIdGenerator;
 
@@ -39,15 +38,13 @@ public class XRoadClientConfig {
      *
      * @param clientDetails client header details
      * @param serviceDetails service header details
-     * @param clientId api user indentifier
      * @param servers XRoad servers
      * @see ClientHeaderDetails
      * @see ServiceHeaderDetails
      */
-    public XRoadClientConfig(HeaderDetails clientDetails, HeaderDetails serviceDetails, String clientId, Set<XRoadServer> servers) {
+    public XRoadClientConfig(HeaderDetails clientDetails, HeaderDetails serviceDetails, Set<XRoadServer> servers) {
         this.clientDetails = clientDetails;
         this.serviceDetails = serviceDetails;
-        this.clientId = clientId;
         this.servers = servers;
     }
 
@@ -65,14 +62,6 @@ public class XRoadClientConfig {
 
     public void setServiceDetails(HeaderDetails serviceDetails) {
         this.serviceDetails = serviceDetails;
-    }
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
     }
 
     public Set<XRoadServer> getServers() {

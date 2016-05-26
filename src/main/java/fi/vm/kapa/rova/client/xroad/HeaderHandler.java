@@ -93,7 +93,7 @@ public class HeaderHandler implements SOAPHandler<SOAPMessageContext> {
                 idHeaderElement.addTextNode(idElement.getValue());
 
                 JAXBElement<String> userIdElement = factory
-                        .createUserId(config.getClientId());
+                        .createUserId(userId);
                 SOAPHeaderElement uidHeaderElement = header
                         .addHeaderElement(userIdElement.getName());
                 uidHeaderElement.addTextNode(userIdElement.getValue());
@@ -135,6 +135,14 @@ public class HeaderHandler implements SOAPHandler<SOAPMessageContext> {
         }
 
         return true;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     @Override

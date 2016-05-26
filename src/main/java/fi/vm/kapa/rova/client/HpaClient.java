@@ -36,5 +36,5 @@ public interface HpaClient {
      * @param issue possible issue that is being checked
      * @return boolean value if delegate is authorized or not
      */
-    boolean getAuthorization(String delegateId, String principalId, String issue);
+    boolean isAuthorized(String userId, String delegateId, String principalId, String issue);
 }

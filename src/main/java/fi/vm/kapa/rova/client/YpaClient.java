@@ -31,5 +31,5 @@ import java.util.List;
  * Client interface for fetching information required when working on behalf of a company.
  */
 public interface YpaClient {
-    List<YpaOrganization> getRoles(String delegateId);
+    List<YpaOrganization> getRoles(String userId, String delegateId);
 }
