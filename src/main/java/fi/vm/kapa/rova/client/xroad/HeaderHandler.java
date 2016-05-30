@@ -102,7 +102,7 @@ public class HeaderHandler implements SOAPHandler<SOAPMessageContext> {
                 JAXBElement<XRoadClientIdentifierType> clientElement = factory.createClient(clientHeaderType);
 
                 clientHeaderType.setObjectType(XRoadObjectType.SUBSYSTEM);
-                clientHeaderType.setXRoadInstance(cd.getxRoadInstance());
+                clientHeaderType.setXRoadInstance(cd.getXRoadInstance());
                 clientHeaderType.setMemberClass(cd.getMemberClass());
                 clientHeaderType.setMemberCode(cd.getMemberCode());
                 clientHeaderType.setSubsystemCode(cd.getSubsystemCode());
@@ -117,7 +117,7 @@ public class HeaderHandler implements SOAPHandler<SOAPMessageContext> {
                 JAXBElement<XRoadServiceIdentifierType> serviceElement = factory
                         .createService(serviceHeaderType);
                 serviceHeaderType.setObjectType(XRoadObjectType.SERVICE);
-                serviceHeaderType.setXRoadInstance(sd.getxRoadInstance());
+                serviceHeaderType.setXRoadInstance(sd.getXRoadInstance());
                 serviceHeaderType.setMemberClass(sd.getMemberClass());
                 serviceHeaderType.setMemberCode(sd.getMemberCode());
                 serviceHeaderType.setSubsystemCode(sd.getSubsystemCode());

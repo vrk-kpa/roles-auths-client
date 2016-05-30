@@ -60,11 +60,11 @@ public class HeaderDetails {
         this.memberClass = memberClass;
     }
 
-    public String getxRoadInstance() {
+    public String getXRoadInstance() {
         return xRoadInstance;
     }
 
-    public void setxRoadInstance(String xRoadInstance) {
+    public void setXRoadInstance(String xRoadInstance) {
         this.xRoadInstance = xRoadInstance;
     }
 
