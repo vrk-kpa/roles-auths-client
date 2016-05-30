@@ -33,8 +33,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import javax.xml.ws.handler.HandlerResolver;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Client implementation for querying possibilities to operate on behalf of another person.
@@ -54,7 +53,7 @@ public class HpaRiClient extends AbstractRiClient implements HpaClient {
         rovaAuthorizationService.setHandlerResolver(hs);
     }
 
-    public boolean isAuthorized(String userId, String delegateId, String principalId, String issue) {
+    public boolean isAuthorized(String userId, String delegateId, String principalId, Set<String> issues) {
         if (userId == null || delegateId == null || principalId == null) {
             throw new IllegalArgumentException("null value in required argument.");
         }
@@ -68,7 +67,9 @@ public class HpaRiClient extends AbstractRiClient implements HpaClient {
         Holder<Request> request = new Holder<>(factory.createRequest());
         Holder<RovaAuthorizationResponse> response = new Holder<>(factory.createRovaAuthorizationResponse());
         request.value.setDelegateIdentifier(delegateId);
-        request.value.getIssue().add(issue);
+        if (issues != null && !issues.isEmpty()) {
+            request.value.getIssue().addAll(issues);
+        }
         request.value.setPrincipalIdentifier(principalId);
         headerHandler.setUserId(userId);
 
