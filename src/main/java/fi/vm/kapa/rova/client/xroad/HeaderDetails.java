@@ -22,14 +22,12 @@
  */
 package fi.vm.kapa.rova.client.xroad;
 
-import java.util.Properties;
-
 /**
  * XRoad message header information.
  */
 public class HeaderDetails {
 
-    protected String sdsbInstance;
+    protected String xRoadInstance;
     protected String memberClass;
     protected String memberCode;
     protected String subsystemCode;
@@ -62,12 +60,12 @@ public class HeaderDetails {
         this.memberClass = memberClass;
     }
 
-    public String getSdsbInstance() {
-        return sdsbInstance;
+    public String getxRoadInstance() {
+        return xRoadInstance;
     }
 
-    public void setSdsbInstance(String sdsbInstance) {
-        this.sdsbInstance = sdsbInstance;
+    public void setxRoadInstance(String xRoadInstance) {
+        this.xRoadInstance = xRoadInstance;
     }
 
     public String getVersion() {
