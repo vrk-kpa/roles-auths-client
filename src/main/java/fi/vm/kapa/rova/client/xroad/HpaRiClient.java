@@ -22,11 +22,14 @@
  */
 package fi.vm.kapa.rova.client.xroad;
 
-import fi.vm.kapa.rova.client.*;
+import fi.vm.kapa.rova.client.ClientException;
+import fi.vm.kapa.rova.client.HpaClient;
 import fi.vm.kapa.rova.client.common.EndPoint;
 import fi.vm.kapa.rova.client.common.RovaServiceDetails;
 import fi.vm.kapa.rova.client.common.RovaServices;
 import fi.vm.kapa.rova.client.common.Server;
+import fi.vm.kapa.rova.client.model.Authorization;
+import fi.vm.kapa.rova.client.model.DecisionReason;
 import fi.vm.kapa.xml.rova.api.authorization.*;
 
 import javax.xml.bind.JAXBElement;
@@ -53,12 +56,11 @@ public class HpaRiClient extends AbstractRiClient implements HpaClient {
         rovaAuthorizationService.setHandlerResolver(hs);
     }
 
-    public boolean isAuthorized(String userId, String delegateId, String principalId, Set<String> issues) {
+    public Authorization isAuthorized(String userId, String delegateId, String principalId, Set<String> issues) {
         if (userId == null || delegateId == null || principalId == null) {
             throw new IllegalArgumentException("null value in required argument.");
         }
 
-        boolean result = false;
 
         RovaAuthorizationPortType port = rovaAuthorizationService.getRovaAuthorizationPort();
         BindingProvider bp = (BindingProvider) port;
@@ -80,17 +82,25 @@ public class HpaRiClient extends AbstractRiClient implements HpaClient {
             authResult = response.value.getAuthorization();
         }
 
+        Authorization auth;
         if (authResult == AuthorizationType.ALLOWED) {
-            result = true;
-        } else if (authResult != AuthorizationType.DISALLOWED) {
+            auth = new Authorization(true);
+        } else if (authResult == AuthorizationType.DISALLOWED) {
+            auth = new Authorization(false);
+            for (DecisionReasonType reason : response.value.getReason()) {
+                auth.getReasons().add(new DecisionReason(reason.getRule(), reason.getValue()));
+            }
+        } else {
+            String message = null;
             if (response.value != null) {
-                JAXBElement<String> message = response.value.getExceptionMessage();
-                if (message != null) {
-                    throw new ClientException("Unexpected response from server: " + message.getValue());
+                JAXBElement<String> messageElem = response.value.getExceptionMessage();
+                if (messageElem != null) {
+                    message = messageElem.getValue();
                 }
             }
+            throw new ClientException("Unexpected response from server: " + message);
         }
-        return result;
+        return auth;
     }
 
 

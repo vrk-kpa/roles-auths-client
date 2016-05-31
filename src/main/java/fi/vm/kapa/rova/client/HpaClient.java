@@ -22,6 +22,8 @@
  */
 package fi.vm.kapa.rova.client;
 
+import fi.vm.kapa.rova.client.model.Authorization;
+
 import java.util.Set;
 
 /**
@@ -34,5 +36,5 @@ public interface HpaClient {
      * @param issue possible issues that should be checked
      * @return boolean value if delegate is authorized or not
      */
-    boolean isAuthorized(String userId, String delegateId, String principalId, Set<String> issue);
+    Authorization isAuthorized(String userId, String delegateId, String principalId, Set<String> issue);
 }
