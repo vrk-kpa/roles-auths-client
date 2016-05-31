@@ -22,8 +22,7 @@
  */
 package fi.vm.kapa.rova.client.xroad;
 
-import fi.vm.kapa.rova.client.ClientException;
-import fi.vm.kapa.rova.client.HpaXRoadClient;
+import fi.vm.kapa.rova.client.common.ClientException;
 import fi.vm.kapa.rova.client.common.EndPoint;
 import fi.vm.kapa.rova.client.common.RovaServiceDetails;
 import fi.vm.kapa.rova.client.common.RovaServices;

@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client;
+package fi.vm.kapa.rova.client.xroad;
 
 import fi.vm.kapa.rova.client.model.Authorization;
 

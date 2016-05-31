@@ -20,16 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client;
-
-
-import fi.vm.kapa.rova.client.model.YpaOrganization;
-
-import java.util.List;
+package fi.vm.kapa.rova.client.xroad;
 
 /**
- * Client interface for fetching information required when working on behalf of a company.
+ * Interface for creating clients.
  */
-public interface YpaXRoadClient {
-    List<YpaOrganization> getRoles(String userId, String delegateId);
+public interface XRoadClientFactory {
+    HpaXRoadClient hpaClient();
+    YpaXRoadClient ypaClient();
 }

@@ -22,11 +22,7 @@
  */
 package fi.vm.kapa.rova.client.xroad;
 
-import fi.vm.kapa.rova.client.*;
-import fi.vm.kapa.rova.client.common.EndPoint;
-import fi.vm.kapa.rova.client.common.RovaServiceDetails;
-import fi.vm.kapa.rova.client.common.RovaServices;
-import fi.vm.kapa.rova.client.common.Server;
+import fi.vm.kapa.rova.client.common.*;
 import fi.vm.kapa.rova.client.model.YpaOrganization;
 import fi.vm.kapa.xml.rova.api.orgroles.*;
 
