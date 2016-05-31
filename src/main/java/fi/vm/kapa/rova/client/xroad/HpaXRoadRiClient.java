@@ -23,7 +23,7 @@
 package fi.vm.kapa.rova.client.xroad;
 
 import fi.vm.kapa.rova.client.ClientException;
-import fi.vm.kapa.rova.client.HpaClient;
+import fi.vm.kapa.rova.client.HpaXRoadClient;
 import fi.vm.kapa.rova.client.common.EndPoint;
 import fi.vm.kapa.rova.client.common.RovaServiceDetails;
 import fi.vm.kapa.rova.client.common.RovaServices;
@@ -41,13 +41,13 @@ import java.util.Set;
 /**
  * Client implementation for querying possibilities to operate on behalf of another person.
  */
-public class HpaRiClient extends AbstractRiClient implements HpaClient {
+public class HpaXRoadRiClient extends AbstractRiClient implements HpaXRoadClient {
 
     private RovaAuthorizationService_Service rovaAuthorizationService = new RovaAuthorizationService_Service();
 
     private ObjectFactory factory = new ObjectFactory();
 
-    public HpaRiClient(XRoadClientConfig config) {
+    public HpaXRoadRiClient(XRoadClientConfig config) {
         RovaServiceDetails details = RovaServices.getDetails(RovaServices.RovaService.AUTHORIZATION.name());
         for (Server server : config.getServers()) {
             endPoints.add(new EndPoint(server, details.getPath()));

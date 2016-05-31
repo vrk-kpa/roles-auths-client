@@ -22,19 +22,14 @@
  */
 package fi.vm.kapa.rova.client;
 
-import fi.vm.kapa.rova.client.model.Authorization;
 
-import java.util.Set;
+import fi.vm.kapa.rova.client.model.YpaOrganization;
+
+import java.util.List;
 
 /**
- * Client interface for fetching information required when working on behalf of an other person.
+ * Client interface for fetching information required when working on behalf of a company.
  */
-public interface HpaClient {
-    /**
-     * @param delegateId personal identification number of delegate
-     * @param principalId personal identification number of principal
-     * @param issue possible issues that should be checked
-     * @return boolean value if delegate is authorized or not
-     */
-    Authorization isAuthorized(String userId, String delegateId, String principalId, Set<String> issue);
+public interface YpaXRoadClient {
+    List<YpaOrganization> getRoles(String userId, String delegateId);
 }

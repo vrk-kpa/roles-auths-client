@@ -20,16 +20,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client;
+package fi.vm.kapa.rova.client.xroad;
 
-
-import fi.vm.kapa.rova.client.model.YpaOrganization;
-
-import java.util.List;
+import fi.vm.kapa.rova.client.XRoadClientFactory;
+import fi.vm.kapa.rova.client.HpaXRoadClient;
+import fi.vm.kapa.rova.client.YpaXRoadClient;
 
 /**
- * Client interface for fetching information required when working on behalf of a company.
+ * Client factory for JAX-WS Reference Implementation clients.
+ * If several XRoad servers are configured into use they will
+ * be used as endpoints with round-robin strategy without fail-over.
  */
-public interface YpaClient {
-    List<YpaOrganization> getRoles(String userId, String delegateId);
+public class XRoadRiClientFactory implements XRoadClientFactory {
+
+    private XRoadClientConfig config;
+
+    public XRoadRiClientFactory(XRoadClientConfig config) {
+        this.config = config;
+    }
+
+    @Override
+    public HpaXRoadClient hpaClient() {
+        return new HpaXRoadRiClient(config);
+    }
+
+    @Override
+    public YpaXRoadClient ypaClient() {
+        return new YpaXRoadRiClient(config);
+    }
+
 }

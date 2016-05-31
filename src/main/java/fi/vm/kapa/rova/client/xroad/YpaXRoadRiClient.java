@@ -40,13 +40,13 @@ import java.util.List;
 /**
  * Client implementation for fetching information required when working on behalf of a company.
  */
-public class YpaRiClient extends AbstractRiClient implements YpaClient {
+public class YpaXRoadRiClient extends AbstractRiClient implements YpaXRoadClient {
 
     private RovaOrganizationalRolesService_Service rovaRolesService = new RovaOrganizationalRolesService_Service();
 
     private ObjectFactory factory = new ObjectFactory();
 
-    public YpaRiClient(XRoadClientConfig config) {
+    public YpaXRoadRiClient(XRoadClientConfig config) {
         RovaServiceDetails details = RovaServices.getDetails(RovaServices.RovaService.ROLES.name());
         for (Server server : config.getServers()) {
             endPoints.add(new EndPoint(server, details.getPath()));
