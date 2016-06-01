@@ -20,10 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client.xroad;
+package fi.vm.kapa.rova.client.xroad.impl;
 
 import fi.vm.kapa.rova.client.common.*;
 import fi.vm.kapa.rova.client.model.YpaOrganization;
+import fi.vm.kapa.rova.client.xroad.XRoadClientConfig;
+import fi.vm.kapa.rova.client.xroad.YpaXRoadClient;
 import fi.vm.kapa.xml.rova.api.orgroles.*;
 
 import javax.xml.bind.JAXBElement;

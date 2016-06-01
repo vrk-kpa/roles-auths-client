@@ -20,7 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client.xroad;
+package fi.vm.kapa.rova.client.xroad.impl;
+
+import fi.vm.kapa.rova.client.xroad.*;
 
 /**
  * Client factory for JAX-WS Reference Implementation clients.

@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client.xroad;
+package fi.vm.kapa.rova.client.xroad.impl;
 
 import fi.vm.kapa.rova.client.common.ClientException;
 import fi.vm.kapa.rova.client.common.EndPoint;
@@ -29,6 +29,8 @@ import fi.vm.kapa.rova.client.common.RovaServices;
 import fi.vm.kapa.rova.client.common.Server;
 import fi.vm.kapa.rova.client.model.Authorization;
 import fi.vm.kapa.rova.client.model.DecisionReason;
+import fi.vm.kapa.rova.client.xroad.HpaXRoadClient;
+import fi.vm.kapa.rova.client.xroad.XRoadClientConfig;
 import fi.vm.kapa.xml.rova.api.authorization.*;
 
 import javax.xml.bind.JAXBElement;
