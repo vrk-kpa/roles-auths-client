@@ -20,11 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client.webapi;
+package fi.vm.kapa.rova.client.common;
 
-public interface WebApiClientFactory {
-
-    HpaWebApiClient hpaWebApiClient(String delegateId);
-    YpaWebApiClient ypaWebApiClient();
-
+public class OAuthConfig {
 }

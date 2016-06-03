@@ -22,9 +22,8 @@
  */
 package fi.vm.kapa.rova.client.webapi;
 
-public interface WebApiClientFactory {
+public interface YpaWebApiClient {
 
-    HpaWebApiClient hpaWebApiClient(String delegateId);
-    YpaWebApiClient ypaWebApiClient();
+
 
 }

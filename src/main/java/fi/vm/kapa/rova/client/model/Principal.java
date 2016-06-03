@@ -20,11 +20,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client.webapi;
+package fi.vm.kapa.rova.client.model;
 
-public interface WebApiClientFactory {
+public class Principal {
 
-    HpaWebApiClient hpaWebApiClient(String delegateId);
-    YpaWebApiClient ypaWebApiClient();
+    private final String personId;
+    private final String name;
+
+    @SuppressWarnings("unused")
+    private Principal() {
+        this(null, null);
+    }
+
+    public Principal(String personId, String name) {
+        this.personId = personId;
+        this.name = name;
+    }
+
+    public String getPersonId() {
+        return personId;
+    }
+
+    public String getName() {
+        return name;
+    }
 
 }
+

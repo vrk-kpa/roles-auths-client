@@ -20,11 +20,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client.webapi;
+package fi.vm.kapa.rova.client.common;
 
-public interface WebApiClientFactory {
+import java.io.Serializable;
 
-    HpaWebApiClient hpaWebApiClient(String delegateId);
-    YpaWebApiClient ypaWebApiClient();
+public class Token implements Serializable {
+
+    private final String sessionId;
+    private final String userId;
+
+    @SuppressWarnings("unused")
+    private Token() {
+        this(null, null);
+    }
+
+    public Token(String sessionId, String userId) {
+        this.sessionId = sessionId;
+        this.userId = userId;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
 
 }

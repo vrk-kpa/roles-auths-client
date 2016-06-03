@@ -45,11 +45,21 @@
             <artifactId>roles-auths-wsdl</artifactId>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
         <!-- ws api -->
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
             <scope>compile</scope>
+        </dependency>
+        <!-- oauth for rest api -->
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.client</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <!-- test deps -->
         <dependency>
