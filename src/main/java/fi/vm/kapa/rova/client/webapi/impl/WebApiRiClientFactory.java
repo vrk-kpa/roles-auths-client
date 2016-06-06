@@ -20,11 +20,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client.webapi;
+package fi.vm.kapa.rova.client.webapi.impl;
 
-public interface WebApiClientFactory {
+import fi.vm.kapa.rova.client.webapi.HpaWebApiClient;
+import fi.vm.kapa.rova.client.webapi.WebApiClientFactory;
+import fi.vm.kapa.rova.client.webapi.YpaWebApiClient;
 
-    HpaWebApiClient hpaWebApiClient(String delegateId);
-    YpaWebApiClient ypaWebApiClient();
+public class WebApiRiClientFactory implements WebApiClientFactory {
 
+    private WebApiClientConfig config;
+
+    public WebApiRiClientFactory(WebApiClientConfig config) {
+        this.config = config;
+    }
+
+    @Override
+    public HpaWebApiClient hpaWebApiClient(String delegateId) {
+        return new HpaWebApiRiClient(config, delegateId);
+    }
+
+    @Override
+    public YpaWebApiClient ypaWebApiClient() {
+        return null;
+    }
 }

@@ -85,9 +85,9 @@ public class HpaXRoadRiClient extends AbstractRiClient implements HpaXRoadClient
 
         Authorization auth;
         if (authResult == AuthorizationType.ALLOWED) {
-            auth = new Authorization(true);
+            auth = new Authorization(authResult.value());
         } else if (authResult == AuthorizationType.DISALLOWED) {
-            auth = new Authorization(false);
+            auth = new Authorization(authResult.value());
             for (DecisionReasonType reason : response.value.getReason()) {
                 auth.getReasons().add(new DecisionReason(reason.getRule(), reason.getValue()));
             }
