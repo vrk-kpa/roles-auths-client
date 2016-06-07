@@ -20,19 +20,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client.webapi;
+package fi.vm.kapa.rova.client.common;
 
-import fi.vm.kapa.rova.client.model.Authorization;
-import fi.vm.kapa.rova.client.model.Principal;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import java.util.HashSet;
+import java.util.Set;
 
-import java.io.IOException;
-import java.util.List;
+public class OrganizationResult {
 
-public interface HpaWebApiClient extends WebApiClient {
+    public enum ResultRoleType {
+        NONE,
+        ALL,
+        NIMKO,
+        TJ,
+        IS,
+        TIL,
+        ELI,
+        S,
+        CLEAR
+    }
 
-    List<Principal> getPrincipals(String requestId) throws OAuthProblemException, OAuthSystemException, IOException;
+    private final String name;
+    private final String identifier;
+    private final Set<ResultRoleType> roles;
 
-    Authorization getAuthorization(String principalId, String requestId, String... issue) throws IOException, OAuthProblemException, OAuthSystemException;
+    @SuppressWarnings("unused")
+    public OrganizationResult() {
+        this(null, null);
+    }
+
+    public OrganizationResult(String name, String identifier) {
+        this.name = name;
+        this.identifier = identifier;
+        this.roles = new HashSet<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public Set<ResultRoleType> getRoles() {
+        return roles;
+    }
+
 }

@@ -22,17 +22,17 @@
  */
 package fi.vm.kapa.rova.client.webapi;
 
-import fi.vm.kapa.rova.client.model.Authorization;
-import fi.vm.kapa.rova.client.model.Principal;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
 import java.io.IOException;
-import java.util.List;
 
-public interface HpaWebApiClient extends WebApiClient {
+public interface WebApiClient {
+    void register(String requestId) throws IOException;
 
-    List<Principal> getPrincipals(String requestId) throws OAuthProblemException, OAuthSystemException, IOException;
+    String getToken(String code, String urlParams) throws OAuthProblemException, OAuthSystemException;
 
-    Authorization getAuthorization(String principalId, String requestId, String... issue) throws IOException, OAuthProblemException, OAuthSystemException;
+    String getOauthSessionId();
+
+    String getOauthUserId();
 }
