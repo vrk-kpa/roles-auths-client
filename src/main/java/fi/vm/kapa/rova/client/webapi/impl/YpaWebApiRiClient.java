@@ -23,9 +23,8 @@
 package fi.vm.kapa.rova.client.webapi.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.kapa.rova.client.model.Authorization;
-import fi.vm.kapa.rova.client.model.Principal;
-import fi.vm.kapa.rova.client.webapi.HpaWebApiClient;
+import fi.vm.kapa.rova.client.common.OrganizationResult;
+import fi.vm.kapa.rova.client.webapi.YpaWebApiClient;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -40,21 +39,21 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HpaWebApiRiClient extends AbstractWebApiRiClient implements HpaWebApiClient {
+public class YpaWebApiRiClient extends AbstractWebApiRiClient implements YpaWebApiClient  {
 
-    public HpaWebApiRiClient(WebApiClientConfig config, String delegateId) {
+    public YpaWebApiRiClient(WebApiClientConfig config, String delegateId) {
         super(config, delegateId);
     }
 
     @Override
     protected String getRegisterUrl() {
-        return "/service/hpa/user/register/" + config.getClientId() + "/" + delegateId;
+        return "/service/ypa/user/register/" + config.getClientId() + "/" + delegateId;
     }
 
     @Override
-    public List<Principal> getPrincipals(String requestId) throws OAuthProblemException, OAuthSystemException, IOException {
+    public List<OrganizationResult> getCompanies(String requestId) throws IOException, OAuthProblemException, OAuthSystemException {
         OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-        String pathWithParams = getPathWithParams("/service/hpa/api/delegate/" + getOauthSessionId(), requestId);
+        String pathWithParams = getPathWithParams("/service/ypa/api/organizationRoles/" + getOauthSessionId(), requestId);
 
         OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString())
                 .setAccessToken(accessToken).buildQueryMessage();
@@ -64,16 +63,14 @@ public class HpaWebApiRiClient extends AbstractWebApiRiClient implements HpaWebA
         OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
         ObjectMapper mapper = new ObjectMapper();
-        com.fasterxml.jackson.databind.JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, Principal.class);
+        com.fasterxml.jackson.databind.JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, OrganizationResult.class);
         return mapper.readValue(resourceResponse.getBody(), resultType);
     }
 
     @Override
-    public Authorization getAuthorization(String principalId, String requestId, String... issues) throws IOException, OAuthProblemException, OAuthSystemException {
+    public List<OrganizationResult> getRoles(String requestId, String organizationId) throws IOException, OAuthProblemException, OAuthSystemException {
         OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-        String pathWithParams = getPathWithParams("/service/hpa/api/authorization/" + getOauthSessionId() + "/" + principalId,
-                requestId, issues);
-
+        String pathWithParams = getPathWithParams("/service/ypa/api/organizationRoles/" + getOauthSessionId() +"/"+ organizationId, requestId);
         OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString())
                 .setAccessToken(accessToken).buildQueryMessage();
         bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization",
@@ -82,9 +79,7 @@ public class HpaWebApiRiClient extends AbstractWebApiRiClient implements HpaWebA
         OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
         ObjectMapper mapper = new ObjectMapper();
-
-        Authorization auth = mapper.readValue(resourceResponse.getBody(), Authorization.class);
-        return auth;
+        com.fasterxml.jackson.databind.JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, OrganizationResult.class);
+        return mapper.readValue(resourceResponse.getBody(), resultType);
     }
-
 }

@@ -22,8 +22,16 @@
  */
 package fi.vm.kapa.rova.client.webapi;
 
-public interface YpaWebApiClient {
+import fi.vm.kapa.rova.client.common.OrganizationResult;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
+import java.io.IOException;
+import java.util.List;
 
+public interface YpaWebApiClient extends WebApiClient {
 
+    List<OrganizationResult> getCompanies(String requestId) throws IOException, OAuthProblemException, OAuthSystemException;
+
+    List<OrganizationResult> getRoles(String requestId, String organizationId) throws IOException, OAuthProblemException, OAuthSystemException;
 }

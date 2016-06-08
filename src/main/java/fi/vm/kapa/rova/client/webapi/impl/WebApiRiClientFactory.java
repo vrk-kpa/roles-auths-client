@@ -40,7 +40,7 @@ public class WebApiRiClientFactory implements WebApiClientFactory {
     }
 
     @Override
-    public YpaWebApiClient ypaWebApiClient() {
-        return null;
+    public YpaWebApiClient ypaWebApiClient(String delegateId) {
+        return new YpaWebApiRiClient(config, delegateId);
     }
 }
