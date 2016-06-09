@@ -44,6 +44,18 @@ public class WebApiClientConfig {
         this(null, null, null, null, null, null, null);
     }
 
+    /**
+     * Constructor for config object.
+     *
+     * @see Builder
+     * @param clientId service clientId
+     * @param baseUrl base URL of service's web front
+     * @param authorizeUrl URL for OAuth, (rova-web-api/oauth/authorize)
+     * @param tokenUrl URL for fetching OAuth access token (rova-web-api/oauth/token)
+     * @param apiKey service apiKey
+     * @param oAuthSecret service oAuthSecret
+     * @param oAuthRedirect URL to redirect to after principal selection
+     */
     public WebApiClientConfig(String clientId, URL baseUrl, String authorizeUrl, String tokenUrl,
                               String apiKey, String oAuthSecret, String oAuthRedirect) {
         this.clientId = clientId;
