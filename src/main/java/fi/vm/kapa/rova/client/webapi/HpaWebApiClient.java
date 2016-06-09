@@ -30,9 +30,35 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Client for HPA-api.
+ */
 public interface HpaWebApiClient extends WebApiClient {
 
-    List<Principal> getPrincipals(String requestId) throws OAuthProblemException, OAuthSystemException, IOException;
+    /**
+     * Get principals chosen by end user.
+     *
+     * @param requestId
+     * @return List of principals
+     * @throws OAuthProblemException
+     * @throws OAuthSystemException
+     * @throws IOException
+     * @see Principal
+     */
+    List<Principal> getPrincipals(String requestId)
+            throws OAuthProblemException, OAuthSystemException, IOException;
 
-    Authorization getAuthorization(String principalId, String requestId, String... issue) throws IOException, OAuthProblemException, OAuthSystemException;
+    /**
+     * Get authorization for selected user with optional issues.
+     *
+     * @param principalId Personal Identity Code identifying the principal
+     * @param requestId
+     * @param issue URIs identifying issues
+     * @return Authorization
+     * @throws IOException
+     * @throws OAuthProblemException
+     * @throws OAuthSystemException
+     */
+    Authorization getAuthorization(String principalId, String requestId, String... issue)
+            throws IOException, OAuthProblemException, OAuthSystemException;
 }

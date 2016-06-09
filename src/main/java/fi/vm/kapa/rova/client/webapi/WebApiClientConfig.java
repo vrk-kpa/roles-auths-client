@@ -20,32 +20,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client.webapi.impl;
+package fi.vm.kapa.rova.client.webapi;
 
 import org.apache.commons.lang3.Validate;
 
 import java.net.URL;
 
+/**
+ * Configuration class for REST Api clients.
+ */
 public class WebApiClientConfig {
 
-//    @Value("${oauth.resource:http://localhost:8102}")
     private final String clientId;
     private final URL baseUrl;
-
-//    @Value("${oauth.authorize:http://localhost:8102/oauth/authorize}")
     private final String authorizeUrl;
-
-//    @Value("${oauth.token:http://localhost:8102/oauth/token}")
     private final String tokenUrl;
-
-//    @Value("${oauth.client.secret:3ba56df8-88b8-4805-9b04-2f8e7a61ae8f}")
     private final String apiKey;
-
-
-//    @Value("${oauth_secret:badb-abe4-cafe}")
     private final String oAuthSecret;
-
-//    @Value("${oauth_redirect_hpa:http://localhost:8901/hpa_web_api.html}")
     private final String oAuthRedirect;
 
     @SuppressWarnings("unused")

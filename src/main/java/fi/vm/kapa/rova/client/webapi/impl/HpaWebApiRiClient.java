@@ -22,10 +22,12 @@
  */
 package fi.vm.kapa.rova.client.webapi.impl;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.kapa.rova.client.model.Authorization;
 import fi.vm.kapa.rova.client.model.Principal;
 import fi.vm.kapa.rova.client.webapi.HpaWebApiClient;
+import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -40,11 +42,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Client implementation for querying possibilities to operate on behalf of another person.
+ */
 public class HpaWebApiRiClient extends AbstractWebApiRiClient implements HpaWebApiClient {
 
     public HpaWebApiRiClient(WebApiClientConfig config, String delegateId) {
         super(config, delegateId);
     }
+
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Override
     protected String getRegisterUrl() {
@@ -63,8 +70,7 @@ public class HpaWebApiRiClient extends AbstractWebApiRiClient implements HpaWebA
 
         OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
-        ObjectMapper mapper = new ObjectMapper();
-        com.fasterxml.jackson.databind.JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, Principal.class);
+        JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, Principal.class);
         return mapper.readValue(resourceResponse.getBody(), resultType);
     }
 
@@ -80,8 +86,6 @@ public class HpaWebApiRiClient extends AbstractWebApiRiClient implements HpaWebA
                 getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
 
         OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-
-        ObjectMapper mapper = new ObjectMapper();
 
         Authorization auth = mapper.readValue(resourceResponse.getBody(), Authorization.class);
         return auth;

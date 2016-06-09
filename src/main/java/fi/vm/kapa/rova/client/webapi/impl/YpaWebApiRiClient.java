@@ -22,8 +22,10 @@
  */
 package fi.vm.kapa.rova.client.webapi.impl;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.kapa.rova.client.common.OrganizationResult;
+import fi.vm.kapa.rova.client.model.YpaOrganization;
+import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
 import fi.vm.kapa.rova.client.webapi.YpaWebApiClient;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
@@ -45,13 +47,15 @@ public class YpaWebApiRiClient extends AbstractWebApiRiClient implements YpaWebA
         super(config, delegateId);
     }
 
+    private ObjectMapper mapper = new ObjectMapper();
+
     @Override
     protected String getRegisterUrl() {
         return "/service/ypa/user/register/" + config.getClientId() + "/" + delegateId;
     }
 
     @Override
-    public List<OrganizationResult> getCompanies(String requestId) throws IOException, OAuthProblemException, OAuthSystemException {
+    public List<YpaOrganization> getCompanies(String requestId) throws IOException, OAuthProblemException, OAuthSystemException {
         OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
         String pathWithParams = getPathWithParams("/service/ypa/api/organizationRoles/" + getOauthSessionId(), requestId);
 
@@ -62,13 +66,12 @@ public class YpaWebApiRiClient extends AbstractWebApiRiClient implements YpaWebA
 
         OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
-        ObjectMapper mapper = new ObjectMapper();
-        com.fasterxml.jackson.databind.JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, OrganizationResult.class);
+        JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, YpaOrganization.class);
         return mapper.readValue(resourceResponse.getBody(), resultType);
     }
 
     @Override
-    public List<OrganizationResult> getRoles(String requestId, String organizationId) throws IOException, OAuthProblemException, OAuthSystemException {
+    public List<YpaOrganization> getRoles(String requestId, String organizationId) throws IOException, OAuthProblemException, OAuthSystemException {
         OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
         String pathWithParams = getPathWithParams("/service/ypa/api/organizationRoles/" + getOauthSessionId() +"/"+ organizationId, requestId);
         OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString())
@@ -78,8 +81,7 @@ public class YpaWebApiRiClient extends AbstractWebApiRiClient implements YpaWebA
 
         OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
-        ObjectMapper mapper = new ObjectMapper();
-        com.fasterxml.jackson.databind.JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, OrganizationResult.class);
+        JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, YpaOrganization.class);
         return mapper.readValue(resourceResponse.getBody(), resultType);
     }
 }

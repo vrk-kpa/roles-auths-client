@@ -30,19 +30,25 @@ import java.util.List;
  */
 public class YpaOrganization {
 
-    private String name;
-    private String identifier;
-    private List<String> roles = new ArrayList<String>();
+    private final String name;
+    private final String identifier;
+    private final List<String> roles;
 
+    @SuppressWarnings("unused")
+    private YpaOrganization() {
+        this(null, null);
+    }
+
+    public YpaOrganization(String identifier, String name) {
+        this.identifier = identifier;
+        this.name = name;
+        this.roles = new ArrayList<>();
+    }
     /**
      * @return name of the organization.
      */
     public String getName() {
             return name;
-        }
-
-    public void setName(String name) {
-            this.name = name;
         }
 
     /**
@@ -52,10 +58,6 @@ public class YpaOrganization {
             return identifier;
         }
 
-    public void setIdentifier(String identifier) {
-            this.identifier = identifier;
-        }
-
     /**
      * @return Roles for the person in the organization, for example TJ, TIL, ELI, S, IS or NIMKO.
      */
@@ -63,5 +65,4 @@ public class YpaOrganization {
             return roles;
         }
 
-    public void setRoles(List<String> roles) { this.roles = roles; }
 }

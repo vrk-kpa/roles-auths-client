@@ -23,7 +23,7 @@
 package fi.vm.kapa.rova.client.webapi.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.kapa.rova.client.common.Token;
+import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
@@ -52,8 +52,20 @@ public abstract class AbstractWebApiRiClient {
     protected final WebApiClientConfig config;
     protected String delegateId;
 
-    protected Token token;
+    private RegisterToken registerToken;
+
     protected String accessToken;
+
+    private static class RegisterToken {
+        String sessionId;
+        String userId;
+        void setSessionId(String sessionId) {
+            this.sessionId = sessionId;
+        }
+        void setUserId(String userId) {
+            this.userId = userId;
+        }
+    }
 
     public AbstractWebApiRiClient(WebApiClientConfig config, String delegateId) {
         this.config = config;
@@ -98,17 +110,16 @@ public abstract class AbstractWebApiRiClient {
             }
         }
         ObjectMapper mapper = new ObjectMapper();
-        this.token = mapper.readValue(tokenStr, Token.class);
+        this.registerToken = mapper.readValue(tokenStr, RegisterToken.class);
     }
 
     public String getOauthSessionId() {
-        return token.getSessionId();
+        return registerToken.sessionId;
     }
 
     public String getOauthUserId() {
-        return token.getUserId();
+        return registerToken.userId;
     }
-
 
     protected String getAuthorizationValue(String path) throws IOException {
         String timestamp = ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_DATE_TIME);
@@ -128,18 +139,13 @@ public abstract class AbstractWebApiRiClient {
         }
     }
 
-    protected String getPathWithParams(String path) {
-        return getPathWithParams(path, null);
-    }
-
     protected String getPathWithParams(String path, String requestId, String... issues) {
         StringBuilder pathBuilder = new StringBuilder(path)
                 .append("?requestId=")
                 .append(requestId);
 
         for (String issue : issues) {
-            pathBuilder.append("&issues=")
-                    .append(issue);
+            pathBuilder.append("&issues=").append(issue);
         }
 
         return pathBuilder.toString();

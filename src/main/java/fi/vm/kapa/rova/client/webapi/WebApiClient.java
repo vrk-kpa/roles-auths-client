@@ -27,10 +27,20 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
 import java.io.IOException;
 
+/**
+ * Shared parent methods for HpaWebApiClient and YpaWebClient.
+ */
 public interface WebApiClient {
+    /**
+     * Initiates a session with webApi. Stores OAuth userid and sessionid for later requests.
+     *
+     * @param requestId chosen by caller.
+     * @throws IOException
+     */
     void register(String requestId) throws IOException;
 
-    String getToken(String code, String urlParams) throws OAuthProblemException, OAuthSystemException;
+    String getToken(String code, String urlParams)
+            throws OAuthProblemException, OAuthSystemException;
 
     String getOauthSessionId();
 

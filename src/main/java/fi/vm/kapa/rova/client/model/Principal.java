@@ -22,6 +22,9 @@
  */
 package fi.vm.kapa.rova.client.model;
 
+/**
+ * Person principal.
+ */
 public class Principal {
 
     private final String personId;
@@ -37,10 +40,18 @@ public class Principal {
         this.name = name;
     }
 
+    /**
+     *
+     * @return Person identity code of this principal.
+     */
     public String getPersonId() {
         return personId;
     }
 
+    /**
+     *
+     * @return Name of this principal.
+     */
     public String getName() {
         return name;
     }

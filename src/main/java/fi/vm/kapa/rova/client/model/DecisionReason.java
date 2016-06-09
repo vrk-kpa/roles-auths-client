@@ -22,7 +22,11 @@
  */
 package fi.vm.kapa.rova.client.model;
 
+/**
+ * Reason for disallowing operation.
+ */
 public class DecisionReason {
+
     private final String rule;
     private final String value;
 
@@ -37,10 +41,18 @@ public class DecisionReason {
         this.value = value;
     }
 
+    /**
+     *
+     * @return id of denying rule.
+     */
     public String getRule() {
         return rule;
     }
 
+    /**
+     *
+     * @return description of reason.
+     */
     public String getValue() {
         return value;
     }

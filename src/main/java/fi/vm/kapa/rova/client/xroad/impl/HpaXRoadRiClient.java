@@ -62,7 +62,6 @@ public class HpaXRoadRiClient extends AbstractRiClient implements HpaXRoadClient
             throw new IllegalArgumentException("null value in required argument.");
         }
 
-
         RovaAuthorizationPortType port = rovaAuthorizationService.getRovaAuthorizationPort();
         BindingProvider bp = (BindingProvider) port;
         bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getNextEndpoint());
@@ -85,9 +84,9 @@ public class HpaXRoadRiClient extends AbstractRiClient implements HpaXRoadClient
 
         Authorization auth;
         if (authResult == AuthorizationType.ALLOWED) {
-            auth = new Authorization(authResult.value());
+            auth = new Authorization(Authorization.Result.ALLOWED);
         } else if (authResult == AuthorizationType.DISALLOWED) {
-            auth = new Authorization(authResult.value());
+            auth = new Authorization(Authorization.Result.DISALLOWED);
             for (DecisionReasonType reason : response.value.getReason()) {
                 auth.getReasons().add(new DecisionReason(reason.getRule(), reason.getValue()));
             }

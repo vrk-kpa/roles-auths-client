@@ -64,16 +64,13 @@ public class YpaXRoadRiClient extends AbstractRiClient implements YpaXRoadClient
         if (organizationListType != null && organizationListType.getOrganization() != null) {
             for (OrganizationalRolesType ort : organizationListType.getOrganization()) {
                 if (ort.getOrganizationIdentifier()!= null && ort.getName() != null) {
-                    YpaOrganization respOrganization = new YpaOrganization();
-                    respOrganization.setName(ort.getName());
-                    respOrganization.setIdentifier(ort.getOrganizationIdentifier());
-                    List<String> roleList = new ArrayList<>();
+                    YpaOrganization respOrganization = new YpaOrganization(ort.getOrganizationIdentifier(), ort.getName());
+                    List<String> roleList = respOrganization.getRoles();
                     if (ort.getRoles() != null && ort.getRoles().getRole() != null) {
                         for (String role : ort.getRoles().getRole()) {
                             roleList.add(role);
                         }
                     }
-                    respOrganization.setRoles(roleList);
                     responseList.add(respOrganization);
                 }
             }
