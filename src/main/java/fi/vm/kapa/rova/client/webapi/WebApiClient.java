@@ -31,18 +31,29 @@ import java.io.IOException;
  * Shared parent methods for HpaWebApiClient and YpaWebClient.
  */
 public interface WebApiClient {
+     //Initiates a session with webApi. Stores OAuth userid and sessionid for later requests.
+
     /**
      * Initiates a session with webApi. Stores OAuth userid and sessionid for later requests.
+     * Return a URL for Rova WebApi selection screen. End user should be directed there for
+     * principal selection.
      *
-     * @param requestId chosen by caller.
+     * @param requestId
+     * @param urlParams to attach to redirect url
+     * @return URL for Rova WebApi selection screen.
      * @throws IOException
      */
-    void register(String requestId) throws IOException;
+    String register(String requestId, String urlParams) throws IOException;
 
-    String getToken(String code, String urlParams)
+    /**
+     * Get OAuth access token and store it in this client.
+     *
+     * @param code OAuth response code receiced by end user after selection
+     * @param urlParams
+     * @throws OAuthProblemException
+     * @throws OAuthSystemException
+     */
+    void getToken(String code, String urlParams)
             throws OAuthProblemException, OAuthSystemException;
 
-    String getOauthSessionId();
-
-    String getOauthUserId();
 }

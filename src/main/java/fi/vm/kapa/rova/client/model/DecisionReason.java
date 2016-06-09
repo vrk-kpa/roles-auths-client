@@ -27,33 +27,38 @@ package fi.vm.kapa.rova.client.model;
  */
 public class DecisionReason {
 
-    private final String rule;
-    private final String value;
+    private final String reasonRule;
+    private final String reasonValue;
+    private final String valueType;
 
     @SuppressWarnings("unused")
     private DecisionReason() {
-        this.rule = null;
-        this.value = null;
+        this(null, null, null);
     }
 
-    public DecisionReason(String rule, String value) {
-        this.rule = rule;
-        this.value = value;
+    public DecisionReason(String reasonRule, String reasonValue, String valueType) {
+        this.reasonRule = reasonRule;
+        this.reasonValue = reasonValue;
+        this.valueType = valueType;
     }
 
     /**
      *
      * @return id of denying rule.
      */
-    public String getRule() {
-        return rule;
+    public String getReasonRule() {
+        return reasonRule;
     }
 
     /**
      *
      * @return description of reason.
      */
-    public String getValue() {
-        return value;
+    public String getReasonValue() {
+        return reasonValue;
+    }
+
+    public String getValueType() {
+        return valueType;
     }
 }

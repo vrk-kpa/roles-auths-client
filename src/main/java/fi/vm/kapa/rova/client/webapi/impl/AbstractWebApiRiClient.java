@@ -74,7 +74,7 @@ public abstract class AbstractWebApiRiClient {
 
     protected abstract String getRegisterUrl();
 
-    public String getToken(String code, String urlParams) throws OAuthProblemException, OAuthSystemException {
+    public void getToken(String code, String urlParams) throws OAuthProblemException, OAuthSystemException {
 
         OAuthClientRequest.TokenRequestBuilder requestBuilder = OAuthClientRequest.tokenLocation(config.getTokenUrl())
                 .setGrantType(GrantType.AUTHORIZATION_CODE)
@@ -91,12 +91,10 @@ public abstract class AbstractWebApiRiClient {
                 requestBuilder.setRedirectURI(config.getOauthRedirect() + urlParams).buildBodyMessage(),
                 OAuthJSONAccessTokenResponse.class);
 
-        String token = oAuthResponse.getAccessToken();
-        this.accessToken = token;
-        return token;
+        this.accessToken = oAuthResponse.getAccessToken();
     }
 
-    public void register(String requestId) throws IOException {
+    public String register(String requestId, String urlParams) throws IOException {
         String pathWithParams = getPathWithParams(getRegisterUrl(), requestId);
         URL url = new URL(config.getBaseUrl(), pathWithParams);
         HttpURLConnection yc = (HttpURLConnection)url.openConnection();
@@ -111,14 +109,20 @@ public abstract class AbstractWebApiRiClient {
         }
         ObjectMapper mapper = new ObjectMapper();
         this.registerToken = mapper.readValue(tokenStr, RegisterToken.class);
+
+        if (urlParams == null) {
+            urlParams = "";
+        }
+
+        return config.getAuthorizeUrl() + "?client_id=" + config.getClientId()
+                + "&redirect_uri=" + config.getOauthRedirect() + urlParams
+                + "&response_type=code"
+                + "&requestId=" + requestId
+                + "&user=" + this.registerToken.userId;
     }
 
-    public String getOauthSessionId() {
+    protected String getOauthSessionId() {
         return registerToken.sessionId;
-    }
-
-    public String getOauthUserId() {
-        return registerToken.userId;
     }
 
     protected String getAuthorizationValue(String path) throws IOException {
@@ -145,7 +149,9 @@ public abstract class AbstractWebApiRiClient {
                 .append(requestId);
 
         for (String issue : issues) {
-            pathBuilder.append("&issues=").append(issue);
+            if (issue != null) {
+                pathBuilder.append("&issues=").append(issue);
+            }
         }
 
         return pathBuilder.toString();
