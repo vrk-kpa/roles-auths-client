@@ -22,16 +22,38 @@
  */
 package fi.vm.kapa.rova.client.webapi;
 
-import fi.vm.kapa.rova.client.common.OrganizationResult;
+import fi.vm.kapa.rova.client.model.YpaOrganization;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Client for YPA-api
+ */
 public interface YpaWebApiClient extends WebApiClient {
 
-    List<OrganizationResult> getCompanies(String requestId) throws IOException, OAuthProblemException, OAuthSystemException;
+    /**
+     * Get companies chosen by end user.
+     *
+     * @param requestId
+     * @return List of organizations and user's roles in them.
+     * @throws IOException
+     * @throws OAuthProblemException
+     * @throws OAuthSystemException
+     */
+    List<YpaOrganization> getCompanies(String requestId) throws IOException, OAuthProblemException, OAuthSystemException;
 
-    List<OrganizationResult> getRoles(String requestId, String organizationId) throws IOException, OAuthProblemException, OAuthSystemException;
+    /**
+     * Get user's roles in given organization.
+     *
+     * @param requestId
+     * @param organizationId
+     * @return Organization and user's roles in it
+     * @throws IOException
+     * @throws OAuthProblemException
+     * @throws OAuthSystemException
+     */
+    List<YpaOrganization> getRoles(String requestId, String organizationId) throws IOException, OAuthProblemException, OAuthSystemException;
 }

@@ -25,8 +25,17 @@ package fi.vm.kapa.rova.client.model;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Authorization tells whether queried operation is allowed or disallowed. Reasons for
+ * disallowing are given, if service configuration permits disclosing them.
+ */
 public class Authorization {
-    private final String result;
+
+    public enum Result {
+        ALLOWED, DISALLOWED
+    }
+
+    private final Result result;
     private final Set<DecisionReason> reasons;
 
     @SuppressWarnings("unused")
@@ -35,12 +44,12 @@ public class Authorization {
         this.reasons = new HashSet<>();
     }
 
-    public Authorization(String result) {
+    public Authorization(Result result) {
         this.result = result;
         this.reasons = new HashSet<>();
     }
 
-    public String getResult() {
+    public Result getResult() {
         return result;
     }
 

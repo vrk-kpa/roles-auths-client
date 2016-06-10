@@ -27,12 +27,33 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
 import java.io.IOException;
 
+/**
+ * Shared parent methods for HpaWebApiClient and YpaWebClient.
+ */
 public interface WebApiClient {
-    void register(String requestId) throws IOException;
+     //Initiates a session with webApi. Stores OAuth userid and sessionid for later requests.
 
-    String getToken(String code, String urlParams) throws OAuthProblemException, OAuthSystemException;
+    /**
+     * Initiates a session with webApi. Stores OAuth userid and sessionid for later requests.
+     * Return a URL for Rova WebApi selection screen. End user should be directed there for
+     * principal selection.
+     *
+     * @param requestId
+     * @param urlParams to attach to redirect url
+     * @return URL for Rova WebApi selection screen.
+     * @throws IOException
+     */
+    String register(String requestId, String urlParams) throws IOException;
 
-    String getOauthSessionId();
+    /**
+     * Get OAuth access token and store it in this client.
+     *
+     * @param code OAuth response code receiced by end user after selection
+     * @param urlParams
+     * @throws OAuthProblemException
+     * @throws OAuthSystemException
+     */
+    void getToken(String code, String urlParams)
+            throws OAuthProblemException, OAuthSystemException;
 
-    String getOauthUserId();
 }

@@ -23,7 +23,7 @@
 package fi.vm.kapa.rova.client.webapi.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.kapa.rova.client.common.Token;
+import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
@@ -52,8 +52,20 @@ public abstract class AbstractWebApiRiClient {
     protected final WebApiClientConfig config;
     protected String delegateId;
 
-    protected Token token;
+    private RegisterToken registerToken;
+
     protected String accessToken;
+
+    private static class RegisterToken {
+        String sessionId;
+        String userId;
+        void setSessionId(String sessionId) {
+            this.sessionId = sessionId;
+        }
+        void setUserId(String userId) {
+            this.userId = userId;
+        }
+    }
 
     public AbstractWebApiRiClient(WebApiClientConfig config, String delegateId) {
         this.config = config;
@@ -62,7 +74,7 @@ public abstract class AbstractWebApiRiClient {
 
     protected abstract String getRegisterUrl();
 
-    public String getToken(String code, String urlParams) throws OAuthProblemException, OAuthSystemException {
+    public void getToken(String code, String urlParams) throws OAuthProblemException, OAuthSystemException {
 
         OAuthClientRequest.TokenRequestBuilder requestBuilder = OAuthClientRequest.tokenLocation(config.getTokenUrl())
                 .setGrantType(GrantType.AUTHORIZATION_CODE)
@@ -79,12 +91,10 @@ public abstract class AbstractWebApiRiClient {
                 requestBuilder.setRedirectURI(config.getOauthRedirect() + urlParams).buildBodyMessage(),
                 OAuthJSONAccessTokenResponse.class);
 
-        String token = oAuthResponse.getAccessToken();
-        this.accessToken = token;
-        return token;
+        this.accessToken = oAuthResponse.getAccessToken();
     }
 
-    public void register(String requestId) throws IOException {
+    public String register(String requestId, String urlParams) throws IOException {
         String pathWithParams = getPathWithParams(getRegisterUrl(), requestId);
         URL url = new URL(config.getBaseUrl(), pathWithParams);
         HttpURLConnection yc = (HttpURLConnection)url.openConnection();
@@ -98,17 +108,22 @@ public abstract class AbstractWebApiRiClient {
             }
         }
         ObjectMapper mapper = new ObjectMapper();
-        this.token = mapper.readValue(tokenStr, Token.class);
+        this.registerToken = mapper.readValue(tokenStr, RegisterToken.class);
+
+        if (urlParams == null) {
+            urlParams = "";
+        }
+
+        return config.getAuthorizeUrl() + "?client_id=" + config.getClientId()
+                + "&redirect_uri=" + config.getOauthRedirect() + urlParams
+                + "&response_type=code"
+                + "&requestId=" + requestId
+                + "&user=" + this.registerToken.userId;
     }
 
-    public String getOauthSessionId() {
-        return token.getSessionId();
+    protected String getOauthSessionId() {
+        return registerToken.sessionId;
     }
-
-    public String getOauthUserId() {
-        return token.getUserId();
-    }
-
 
     protected String getAuthorizationValue(String path) throws IOException {
         String timestamp = ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_DATE_TIME);
@@ -128,18 +143,15 @@ public abstract class AbstractWebApiRiClient {
         }
     }
 
-    protected String getPathWithParams(String path) {
-        return getPathWithParams(path, null);
-    }
-
     protected String getPathWithParams(String path, String requestId, String... issues) {
         StringBuilder pathBuilder = new StringBuilder(path)
                 .append("?requestId=")
                 .append(requestId);
 
         for (String issue : issues) {
-            pathBuilder.append("&issues=")
-                    .append(issue);
+            if (issue != null) {
+                pathBuilder.append("&issues=").append(issue);
+            }
         }
 
         return pathBuilder.toString();
