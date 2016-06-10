@@ -31,6 +31,7 @@ import java.util.Set;
  */
 public interface HpaXRoadClient {
     /**
+     * @param userId user identifier
      * @param delegateId personal identification number of delegate
      * @param principalId personal identification number of principal
      * @param issue possible issues that should be checked
