@@ -123,7 +123,7 @@ public abstract class AbstractWebApiRiClient {
                 + "&user=" + this.registerToken.userId;
     }
 
-    public boolean unregister() throws IOException {
+    public Boolean unregister() throws IOException {
         String sessionId = this.registerToken.sessionId;
         if (sessionId != null) {
             String path = getUnRegisterUrl(sessionId);

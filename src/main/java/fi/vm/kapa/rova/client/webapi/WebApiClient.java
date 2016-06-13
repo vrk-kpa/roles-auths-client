@@ -46,6 +46,16 @@ public interface WebApiClient {
     String register(String requestId, String urlParams) throws IOException;
 
     /**
+     * Terminates a session with webApi.
+     * Returns true for successful termination. E
+     *
+     * @return URL for Rova WebApi selection screen.
+     * @throws IOException
+     */
+    Boolean unregister() throws IOException;
+
+
+    /**
      * Get OAuth access token and store it in this client.
      *
      * @param code OAuth response code receiced by end user after selection
