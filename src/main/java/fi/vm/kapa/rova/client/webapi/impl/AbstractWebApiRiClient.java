@@ -74,6 +74,8 @@ public abstract class AbstractWebApiRiClient {
 
     protected abstract String getRegisterUrl();
 
+    protected abstract String getUnRegisterUrl(String sessionId);
+
     public void getToken(String code, String urlParams) throws OAuthProblemException, OAuthSystemException {
 
         OAuthClientRequest.TokenRequestBuilder requestBuilder = OAuthClientRequest.tokenLocation(config.getTokenUrl())
@@ -119,6 +121,26 @@ public abstract class AbstractWebApiRiClient {
                 + "&response_type=code"
                 + "&requestId=" + requestId
                 + "&user=" + this.registerToken.userId;
+    }
+
+    public boolean unregister() throws IOException {
+        String sessionId = this.registerToken.sessionId;
+        if (sessionId != null) {
+            String path = getUnRegisterUrl(sessionId);
+            URL url = new URL(config.getBaseUrl(), path);
+            HttpURLConnection yc = (HttpURLConnection) url.openConnection();
+            yc.setRequestProperty("X-AsiointivaltuudetAuthorization", getAuthorizationValue(path));
+            String resultString = null;
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()))) {
+                String s;
+                while ((s = in.readLine()) != null) {
+                    resultString = s;
+                }
+            }
+            return (resultString != null && "true".equalsIgnoreCase(resultString));
+        } else {
+            return false;
+        }
     }
 
     protected String getOauthSessionId() {

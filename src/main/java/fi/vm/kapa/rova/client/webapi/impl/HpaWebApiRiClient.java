@@ -59,6 +59,11 @@ public class HpaWebApiRiClient extends AbstractWebApiRiClient implements HpaWebA
     }
 
     @Override
+    protected String getUnRegisterUrl(String sessionId) {
+        return "/service/hpa/user/unregister/" + sessionId;
+    }
+
+    @Override
     public List<Principal> getPrincipals(String requestId) throws OAuthProblemException, OAuthSystemException, IOException {
         OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
         String pathWithParams = getPathWithParams("/service/hpa/api/delegate/" + getOauthSessionId(), requestId);

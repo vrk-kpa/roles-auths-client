@@ -55,6 +55,11 @@ public class YpaWebApiRiClient extends AbstractWebApiRiClient implements YpaWebA
     }
 
     @Override
+    protected String getUnRegisterUrl(String sessionId) {
+        return "/service/ypa/user/unregister/" + sessionId;
+    }
+
+    @Override
     public List<YpaOrganization> getCompanies(String requestId) throws IOException, OAuthProblemException, OAuthSystemException {
         OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
         String pathWithParams = getPathWithParams("/service/ypa/api/organizationRoles/" + getOauthSessionId(), requestId);
