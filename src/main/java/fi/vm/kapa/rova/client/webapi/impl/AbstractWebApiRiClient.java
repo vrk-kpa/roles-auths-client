@@ -24,6 +24,7 @@ package fi.vm.kapa.rova.client.webapi.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
+import fi.vm.kapa.rova.client.webapi.WebApiClientException;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
@@ -59,13 +60,17 @@ public abstract class AbstractWebApiRiClient {
     private static class RegisterToken {
         String sessionId;
         String userId;
+
         void setSessionId(String sessionId) {
             this.sessionId = sessionId;
         }
+
         void setUserId(String userId) {
             this.userId = userId;
         }
     }
+
+    private boolean clientActiveState;
 
     public AbstractWebApiRiClient(WebApiClientConfig config, String delegateId) {
         this.config = config;
@@ -76,71 +81,74 @@ public abstract class AbstractWebApiRiClient {
 
     protected abstract String getUnRegisterUrl(String sessionId);
 
-    public void getToken(String code, String urlParams) throws OAuthProblemException, OAuthSystemException {
+    public void getToken(String code, String urlParams) throws WebApiClientException {
+        OAuthJSONAccessTokenResponse oAuthResponse = null;
+        try {
+            OAuthClientRequest.TokenRequestBuilder requestBuilder = OAuthClientRequest.tokenLocation(config.getTokenUrl()).setGrantType(GrantType.AUTHORIZATION_CODE).setClientId(config.getClientId()).setClientSecret(config.getoAuthSecret()).setCode(code);
 
-        OAuthClientRequest.TokenRequestBuilder requestBuilder = OAuthClientRequest.tokenLocation(config.getTokenUrl())
-                .setGrantType(GrantType.AUTHORIZATION_CODE)
-                .setClientId(config.getClientId())
-                .setClientSecret(config.getoAuthSecret())
-                .setCode(code);
+            if (urlParams == null) {
+                urlParams = "";
+            }
 
-        if (urlParams == null) {
-            urlParams = "";
+            OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
+            oAuthResponse = oAuthClient.accessToken(requestBuilder.setRedirectURI(config.getOauthRedirect() + urlParams).buildBodyMessage(), OAuthJSONAccessTokenResponse.class);
+        } catch (OAuthProblemException | OAuthSystemException e) {
+            handleException("Unable to get token", e);
         }
-
-        OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-        OAuthJSONAccessTokenResponse oAuthResponse = oAuthClient.accessToken(
-                requestBuilder.setRedirectURI(config.getOauthRedirect() + urlParams).buildBodyMessage(),
-                OAuthJSONAccessTokenResponse.class);
-
         this.accessToken = oAuthResponse.getAccessToken();
     }
 
-    public String register(String requestId, String urlParams) throws IOException {
-        String pathWithParams = getPathWithParams(getRegisterUrl(), requestId);
-        URL url = new URL(config.getBaseUrl(), pathWithParams);
-        HttpURLConnection yc = (HttpURLConnection)url.openConnection();
-        yc.setRequestProperty("X-AsiointivaltuudetAuthorization", getAuthorizationValue(pathWithParams));
-
-        String tokenStr = null;
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()))) {
-            String s;
-            while ((s = in.readLine()) != null) {
-                tokenStr = s;
-            }
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        this.registerToken = mapper.readValue(tokenStr, RegisterToken.class);
-
-        if (urlParams == null) {
-            urlParams = "";
-        }
-
-        return config.getAuthorizeUrl() + "?client_id=" + config.getClientId()
-                + "&redirect_uri=" + config.getOauthRedirect() + urlParams
-                + "&response_type=code"
-                + "&requestId=" + requestId
-                + "&user=" + this.registerToken.userId;
-    }
-
-    public Boolean unregister() throws IOException {
-        String sessionId = this.registerToken.sessionId;
-        if (sessionId != null) {
-            String path = getUnRegisterUrl(sessionId);
-            URL url = new URL(config.getBaseUrl(), path);
+    public String register(String requestId, String urlParams) throws WebApiClientException {
+        try {
+            clientActiveState = true;
+            String pathWithParams = getPathWithParams(getRegisterUrl(), requestId);
+            URL url = new URL(config.getBaseUrl(), pathWithParams);
             HttpURLConnection yc = (HttpURLConnection) url.openConnection();
-            yc.setRequestProperty("X-AsiointivaltuudetAuthorization", getAuthorizationValue(path));
-            String resultString = null;
+            yc.setRequestProperty("X-AsiointivaltuudetAuthorization", getAuthorizationValue(pathWithParams));
+
+            String tokenStr = null;
             try (BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()))) {
                 String s;
                 while ((s = in.readLine()) != null) {
-                    resultString = s;
+                    tokenStr = s;
                 }
             }
-            return (resultString != null && "true".equalsIgnoreCase(resultString));
-        } else {
-            return false;
+            ObjectMapper mapper = new ObjectMapper();
+            this.registerToken = mapper.readValue(tokenStr, RegisterToken.class);
+
+            if (urlParams == null) {
+                urlParams = "";
+            }
+            return config.getAuthorizeUrl() + "?client_id=" + config.getClientId() + "&redirect_uri=" + config.getOauthRedirect() + urlParams + "&response_type=code" + "&requestId=" + requestId + "&user=" + this.registerToken.userId;
+        } catch (IOException e) {
+            handleException(e);
         }
+        // should not get here
+        return null;
+    }
+
+    public Boolean unregister() throws WebApiClientException {
+        clientActiveState = false;
+        try {
+            String sessionId = this.registerToken.sessionId;
+            if (sessionId != null) {
+                String path = getUnRegisterUrl(sessionId);
+                URL url = new URL(config.getBaseUrl(), path);
+                HttpURLConnection yc = (HttpURLConnection) url.openConnection();
+                yc.setRequestProperty("X-AsiointivaltuudetAuthorization", getAuthorizationValue(path));
+                String resultString = null;
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()))) {
+                    String s;
+                    while ((s = in.readLine()) != null) {
+                        resultString = s;
+                    }
+                }
+                return (resultString != null && "true".equalsIgnoreCase(resultString));
+            }
+        } catch (IOException e) {
+            handleException("Unregisterig failed", e);
+        }
+        return false;
     }
 
     protected String getOauthSessionId() {
@@ -166,9 +174,7 @@ public abstract class AbstractWebApiRiClient {
     }
 
     protected String getPathWithParams(String path, String requestId, String... issues) {
-        StringBuilder pathBuilder = new StringBuilder(path)
-                .append("?requestId=")
-                .append(requestId);
+        StringBuilder pathBuilder = new StringBuilder(path).append("?requestId=").append(requestId);
 
         for (String issue : issues) {
             if (issue != null) {
@@ -177,5 +183,22 @@ public abstract class AbstractWebApiRiClient {
         }
 
         return pathBuilder.toString();
+    }
+
+    protected void handleException(Throwable t) throws WebApiClientException {
+        clientActiveState = false;
+        throw new WebApiClientException("Got exception client now in inactive state", t);
+    }
+
+    protected void handleException(String msg, Throwable t) throws WebApiClientException {
+        clientActiveState = false;
+        throw new WebApiClientException(msg, t);
+    }
+
+    protected boolean isClientActive() throws WebApiClientException {
+        if (!clientActiveState) {
+            throw new WebApiClientException("Invalid request, client in inactive state");
+        }
+        return true;
     }
 }

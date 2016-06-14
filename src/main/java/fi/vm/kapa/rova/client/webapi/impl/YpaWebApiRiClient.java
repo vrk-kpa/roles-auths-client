@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.kapa.rova.client.model.YpaOrganization;
 import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
+import fi.vm.kapa.rova.client.webapi.WebApiClientException;
 import fi.vm.kapa.rova.client.webapi.YpaWebApiClient;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
@@ -37,6 +38,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,33 +62,41 @@ public class YpaWebApiRiClient extends AbstractWebApiRiClient implements YpaWebA
     }
 
     @Override
-    public List<YpaOrganization> getCompanies(String requestId) throws IOException, OAuthProblemException, OAuthSystemException {
+    public List<YpaOrganization> getCompanies(String requestId) throws WebApiClientException {
+        List<YpaOrganization> result = null;
         OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
         String pathWithParams = getPathWithParams("/service/ypa/api/organizationRoles/" + getOauthSessionId(), requestId);
 
-        OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString())
-                .setAccessToken(accessToken).buildQueryMessage();
-        bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization",
-                getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
+        try {
+            OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString()).setAccessToken(accessToken).buildQueryMessage();
+            bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization", getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
 
-        OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+            OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
-        JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, YpaOrganization.class);
-        return mapper.readValue(resourceResponse.getBody(), resultType);
+            JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, YpaOrganization.class);
+            result =  mapper.readValue(resourceResponse.getBody(), resultType);
+        } catch (IOException | OAuthSystemException | OAuthProblemException e) {
+            handleException(e);
+        }
+        return result;
     }
 
     @Override
-    public List<YpaOrganization> getRoles(String requestId, String organizationId) throws IOException, OAuthProblemException, OAuthSystemException {
+    public List<YpaOrganization> getRoles(String requestId, String organizationId) throws WebApiClientException {
+        List<YpaOrganization> result = null;
         OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
         String pathWithParams = getPathWithParams("/service/ypa/api/organizationRoles/" + getOauthSessionId() +"/"+ organizationId, requestId);
-        OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString())
-                .setAccessToken(accessToken).buildQueryMessage();
-        bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization",
-                getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
+        try {
+            OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString()).setAccessToken(accessToken).buildQueryMessage();
+            bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization", getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
 
-        OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+            OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
-        JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, YpaOrganization.class);
-        return mapper.readValue(resourceResponse.getBody(), resultType);
+            JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, YpaOrganization.class);
+            result = mapper.readValue(resourceResponse.getBody(), resultType);
+        } catch (IOException| OAuthProblemException | OAuthSystemException e) {
+            handleException(e);
+        }
+        return result;
     }
 }

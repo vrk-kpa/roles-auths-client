@@ -40,13 +40,10 @@ public interface HpaWebApiClient extends WebApiClient {
      *
      * @param requestId
      * @return List of principals
-     * @throws OAuthProblemException
-     * @throws OAuthSystemException
-     * @throws IOException
+     * @throws WebApiClientException
      * @see Principal
      */
-    List<Principal> getPrincipals(String requestId)
-            throws OAuthProblemException, OAuthSystemException, IOException;
+    List<Principal> getPrincipals(String requestId) throws WebApiClientException;
 
     /**
      * Get authorization for selected user with optional issues.
@@ -55,10 +52,8 @@ public interface HpaWebApiClient extends WebApiClient {
      * @param requestId
      * @param issue URIs identifying issues
      * @return Authorization
-     * @throws IOException
-     * @throws OAuthProblemException
-     * @throws OAuthSystemException
+     * @throws WebApiClientException
      */
     Authorization getAuthorization(String principalId, String requestId, String... issue)
-            throws IOException, OAuthProblemException, OAuthSystemException;
+            throws WebApiClientException;
 }
