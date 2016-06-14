@@ -23,7 +23,10 @@
 package fi.vm.kapa.rova.client.webapi;
 
 /**
- * Created by Juha Korkalainen on 14.6.2016.
+ * Generic exception class for WebApiClient
+ *
+ * This exception can be thrown if client is in error state.
+ * This exception is also thrown if any underlying library throws checked exception.
  */
 public class WebApiClientException extends Exception {
     public WebApiClientException(String msg, Throwable cause) {
