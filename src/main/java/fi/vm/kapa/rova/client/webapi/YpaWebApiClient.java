@@ -39,11 +39,9 @@ public interface YpaWebApiClient extends WebApiClient {
      *
      * @param requestId
      * @return List of organizations and user's roles in them.
-     * @throws IOException
-     * @throws OAuthProblemException
-     * @throws OAuthSystemException
+     * @throws WebApiClientException
      */
-    List<YpaOrganization> getCompanies(String requestId) throws IOException, OAuthProblemException, OAuthSystemException;
+    List<YpaOrganization> getCompanies(String requestId) throws WebApiClientException;
 
     /**
      * Get user's roles in given organization.
@@ -51,9 +49,7 @@ public interface YpaWebApiClient extends WebApiClient {
      * @param requestId
      * @param organizationId
      * @return Organization and user's roles in it
-     * @throws IOException
-     * @throws OAuthProblemException
-     * @throws OAuthSystemException
+     * @throws WebApiClientException
      */
-    List<YpaOrganization> getRoles(String requestId, String organizationId) throws IOException, OAuthProblemException, OAuthSystemException;
+    List<YpaOrganization> getRoles(String requestId, String organizationId) throws WebApiClientException;
 }

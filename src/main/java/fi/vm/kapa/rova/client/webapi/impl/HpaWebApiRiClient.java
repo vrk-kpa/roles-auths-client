@@ -28,6 +28,7 @@ import fi.vm.kapa.rova.client.model.Authorization;
 import fi.vm.kapa.rova.client.model.Principal;
 import fi.vm.kapa.rova.client.webapi.HpaWebApiClient;
 import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
+import fi.vm.kapa.rova.client.webapi.WebApiClientException;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -59,36 +60,48 @@ public class HpaWebApiRiClient extends AbstractWebApiRiClient implements HpaWebA
     }
 
     @Override
-    public List<Principal> getPrincipals(String requestId) throws OAuthProblemException, OAuthSystemException, IOException {
-        OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-        String pathWithParams = getPathWithParams("/service/hpa/api/delegate/" + getOauthSessionId(), requestId);
-
-        OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString())
-                .setAccessToken(accessToken).buildQueryMessage();
-        bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization",
-                getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
-
-        OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-
-        JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, Principal.class);
-        return mapper.readValue(resourceResponse.getBody(), resultType);
+    protected String getUnRegisterUrl(String sessionId) {
+        return "/service/hpa/user/unregister/" + sessionId;
     }
 
     @Override
-    public Authorization getAuthorization(String principalId, String requestId, String... issues) throws IOException, OAuthProblemException, OAuthSystemException {
-        OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-        String pathWithParams = getPathWithParams("/service/hpa/api/authorization/" + getOauthSessionId() + "/" + principalId,
-                requestId, issues);
+    public List<Principal> getPrincipals(String requestId) throws WebApiClientException {
+        List<Principal> result = null;
+        try {
+            OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
+            String pathWithParams = getPathWithParams("/service/hpa/api/delegate/" + getOauthSessionId(), requestId);
 
-        OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString())
-                .setAccessToken(accessToken).buildQueryMessage();
-        bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization",
-                getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
+            OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString()).setAccessToken(accessToken).buildQueryMessage();
+            bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization", getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
 
-        OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+            OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
-        Authorization auth = mapper.readValue(resourceResponse.getBody(), Authorization.class);
-        return auth;
+            JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, Principal.class);
+            return mapper.readValue(resourceResponse.getBody(), resultType);
+        } catch (IOException | OAuthSystemException | OAuthProblemException e) {
+            handleException(e);
+        }
+        return result;
+    }
+
+    @Override
+    public Authorization getAuthorization(String principalId, String requestId, String... issues)
+            throws WebApiClientException {
+        Authorization result = null;
+        try {
+            OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
+            String pathWithParams = getPathWithParams("/service/hpa/api/authorization/" + getOauthSessionId() + "/" + principalId, requestId, issues);
+
+            OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString()).setAccessToken(accessToken).buildQueryMessage();
+            bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization", getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
+
+            OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+
+            result = mapper.readValue(resourceResponse.getBody(), Authorization.class);
+        } catch (IOException | OAuthProblemException | OAuthSystemException e) {
+            handleException(e);
+        }
+        return result;
     }
 
 }

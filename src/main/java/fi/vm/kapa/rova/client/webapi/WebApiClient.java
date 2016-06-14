@@ -41,19 +41,27 @@ public interface WebApiClient {
      * @param requestId
      * @param urlParams to attach to redirect url
      * @return URL for Rova WebApi selection screen.
-     * @throws IOException
+     * @throws WebApiClientException
      */
-    String register(String requestId, String urlParams) throws IOException;
+    String register(String requestId, String urlParams) throws WebApiClientException;
+
+    /**
+     * Terminates a session with webApi.
+     * Returns true for successful termination. E
+     *
+     * @return URL for Rova WebApi selection screen.
+     * @throws WebApiClientException
+     */
+    Boolean unregister() throws WebApiClientException;
+
 
     /**
      * Get OAuth access token and store it in this client.
      *
      * @param code OAuth response code receiced by end user after selection
      * @param urlParams
-     * @throws OAuthProblemException
-     * @throws OAuthSystemException
+     * @throws WebApiClientException
      */
-    void getToken(String code, String urlParams)
-            throws OAuthProblemException, OAuthSystemException;
+    void getToken(String code, String urlParams) throws WebApiClientException;
 
 }

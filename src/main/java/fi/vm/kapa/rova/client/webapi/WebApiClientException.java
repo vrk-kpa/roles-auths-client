@@ -22,38 +22,18 @@
  */
 package fi.vm.kapa.rova.client.webapi;
 
-import fi.vm.kapa.rova.client.model.Authorization;
-import fi.vm.kapa.rova.client.model.Principal;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-
-import java.io.IOException;
-import java.util.List;
-
 /**
- * Client for HPA-api.
+ * Generic exception class for WebApiClient
+ *
+ * This exception can be thrown if client is in error state.
+ * This exception is also thrown if any underlying library throws checked exception.
  */
-public interface HpaWebApiClient extends WebApiClient {
+public class WebApiClientException extends Exception {
+    public WebApiClientException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+    public WebApiClientException(String msg) {
+        super(msg);
+    }
 
-    /**
-     * Get principals chosen by end user.
-     *
-     * @param requestId
-     * @return List of principals
-     * @throws WebApiClientException
-     * @see Principal
-     */
-    List<Principal> getPrincipals(String requestId) throws WebApiClientException;
-
-    /**
-     * Get authorization for selected user with optional issues.
-     *
-     * @param principalId Personal Identity Code identifying the principal
-     * @param requestId
-     * @param issue URIs identifying issues
-     * @return Authorization
-     * @throws WebApiClientException
-     */
-    Authorization getAuthorization(String principalId, String requestId, String... issue)
-            throws WebApiClientException;
 }
