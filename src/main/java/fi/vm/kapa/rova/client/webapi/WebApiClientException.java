@@ -29,6 +29,9 @@ package fi.vm.kapa.rova.client.webapi;
  * This exception is also thrown if any underlying library throws checked exception.
  */
 public class WebApiClientException extends Exception {
+
+    private static final long serialVersionUID = 1L;
+
     public WebApiClientException(String msg, Throwable cause) {
         super(msg, cause);
     }
