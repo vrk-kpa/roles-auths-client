@@ -1,2 +1,7 @@
 /target/
 roles-auths-client.iml
+
+#Eclipse project files
+.classpath
+.project
+.settings/
