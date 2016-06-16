@@ -22,11 +22,6 @@
  */
 package fi.vm.kapa.rova.client.webapi;
 
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-
-import java.io.IOException;
-
 /**
  * Shared parent methods for HpaWebApiClient and YpaWebClient.
  */
@@ -39,11 +34,10 @@ public interface WebApiClient {
      * principal selection.
      *
      * @param requestId
-     * @param urlParams to attach to redirect url
      * @return URL for Rova WebApi selection screen.
      * @throws WebApiClientException
      */
-    String register(String requestId, String urlParams) throws WebApiClientException;
+    String register(String requestId) throws WebApiClientException;
 
     /**
      * Terminates a session with webApi.
@@ -58,10 +52,10 @@ public interface WebApiClient {
     /**
      * Get OAuth access token and store it in this client.
      *
-     * @param code OAuth response code receiced by end user after selection
-     * @param urlParams
+     * @param codeParam OAuth response code received by end user after selection as query parameter
+     * @param stateParam OAuth response state received by end user after selection as query parameter
      * @throws WebApiClientException
      */
-    void getToken(String code, String urlParams) throws WebApiClientException;
+    void getToken(String codeParam, String stateParam) throws WebApiClientException;
 
 }

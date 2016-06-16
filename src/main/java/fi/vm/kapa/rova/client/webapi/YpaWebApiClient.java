@@ -22,12 +22,9 @@
  */
 package fi.vm.kapa.rova.client.webapi;
 
-import fi.vm.kapa.rova.client.model.YpaOrganization;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-
-import java.io.IOException;
 import java.util.List;
+
+import fi.vm.kapa.rova.client.model.YpaOrganization;
 
 /**
  * Client for YPA-api

@@ -22,13 +22,10 @@
  */
 package fi.vm.kapa.rova.client.webapi;
 
+import java.util.List;
+
 import fi.vm.kapa.rova.client.model.Authorization;
 import fi.vm.kapa.rova.client.model.Principal;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Client for HPA-api.
