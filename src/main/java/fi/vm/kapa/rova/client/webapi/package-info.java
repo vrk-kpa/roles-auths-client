@@ -32,15 +32,15 @@
  {@code
 WebApiClientFactory factory = clientFactoryStore.getHpaFactory(clientId);
 HpaWebApiClient client = factory.hpaWebApiClient(hetu);
-String authorizeUrl = client.register("requestId", null);
+String authorizeUrl = client.register("requestId");
  }
  </pre>
 
         <p>End user chooses the principal in Rova WebApi and returns to service with the OAuth
-        response code. Fetch the access token and selected principal.</p>
+        response code and OAuth state. Fetch the access token and selected principal.</p>
 <pre>
  {@code
-client.getToken(code, params);
+client.getToken(code, state);
 List<Principal> principals = client.getPrincipals("requestId")
  }
  </pre>
