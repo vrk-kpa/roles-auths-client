@@ -34,11 +34,10 @@ public interface WebApiClient {
      * principal selection.
      *
      * @param requestId
-     * @param urlParams to attach to redirect url
      * @return URL for Rova WebApi selection screen.
      * @throws WebApiClientException
      */
-    String register(String requestId, String urlParams) throws WebApiClientException;
+    String register(String requestId) throws WebApiClientException;
 
     /**
      * Terminates a session with webApi.
@@ -55,9 +54,8 @@ public interface WebApiClient {
      *
      * @param codeParam OAuth response code received by end user after selection as query parameter
      * @param stateParam OAuth response state received by end user after selection as query parameter
-     * @param urlParams 
      * @throws WebApiClientException
      */
-    void getToken(String codeParam, String stateParam, String urlParams) throws WebApiClientException;
+    void getToken(String codeParam, String stateParam) throws WebApiClientException;
 
 }

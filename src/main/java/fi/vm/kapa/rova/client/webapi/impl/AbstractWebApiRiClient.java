@@ -89,29 +89,25 @@ public abstract class AbstractWebApiRiClient {
 
     protected abstract String getUnRegisterUrl(String sessionId);
 
-    public void getToken(String code,  String state, String urlParams) throws WebApiClientException {
-        if(!stateParameter.equals(state)) {
+    public void getToken(String codeParam,  String stateParam) throws WebApiClientException {
+        if(!stateParameter.equals(stateParam)) {
             clientActiveState = false;
             throw new WebApiClientException("Mismatching OAuth state parameter. Expected state=" + stateParameter);
         }
 
         OAuthJSONAccessTokenResponse oAuthResponse = null;
         try {
-            OAuthClientRequest.TokenRequestBuilder requestBuilder = OAuthClientRequest.tokenLocation(config.getTokenUrl()).setGrantType(GrantType.AUTHORIZATION_CODE).setClientId(config.getClientId()).setClientSecret(config.getoAuthSecret()).setCode(code);
-
-            if (urlParams == null) {
-                urlParams = "";
-            }
+            OAuthClientRequest.TokenRequestBuilder requestBuilder = OAuthClientRequest.tokenLocation(config.getTokenUrl()).setGrantType(GrantType.AUTHORIZATION_CODE).setClientId(config.getClientId()).setClientSecret(config.getoAuthSecret()).setCode(codeParam);
             
             OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-            oAuthResponse = oAuthClient.accessToken(requestBuilder.setRedirectURI(config.getOauthRedirect() + urlParams).buildBodyMessage(), OAuthJSONAccessTokenResponse.class);
+            oAuthResponse = oAuthClient.accessToken(requestBuilder.setRedirectURI(config.getOauthRedirect()).buildBodyMessage(), OAuthJSONAccessTokenResponse.class);
         } catch (OAuthProblemException | OAuthSystemException e) {
             handleException("Unable to get token", e);
         }
         this.accessToken = oAuthResponse.getAccessToken();
     }
 
-    public String register(String requestId, String urlParams) throws WebApiClientException {
+    public String register(String requestId) throws WebApiClientException {
         try {
             clientActiveState = true;
             String pathWithParams = getPathWithParams(getRegisterUrl(), requestId);
@@ -129,9 +125,6 @@ public abstract class AbstractWebApiRiClient {
             ObjectMapper mapper = new ObjectMapper();
             this.registerToken = mapper.readValue(tokenStr, RegisterToken.class);
 
-            if (urlParams == null) {
-                urlParams = "";
-            }
             
             return config.getAuthorizeUrl() //
                     + "?client_id=" + config.getClientId() //
@@ -139,7 +132,7 @@ public abstract class AbstractWebApiRiClient {
                     + "&requestId=" + requestId//
                     + "&user=" + this.registerToken.userId //
                     + "&state=" + stateParameter //
-                    + "&redirect_uri=" + config.getOauthRedirect() + urlParams;
+                    + "&redirect_uri=" + config.getOauthRedirect();
         } catch (IOException e) {
             handleException(e);
         }
