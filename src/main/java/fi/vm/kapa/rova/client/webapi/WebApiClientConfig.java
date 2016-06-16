@@ -91,7 +91,7 @@ public class WebApiClientConfig {
         return oAuthSecret;
     }
 
-    public String getOauthRedirect() {
+    public String getoAuthRedirect() {
         return oAuthRedirect;
     }
 

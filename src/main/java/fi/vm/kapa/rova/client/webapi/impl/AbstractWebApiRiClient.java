@@ -22,6 +22,19 @@
  */
 package fi.vm.kapa.rova.client.webapi.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
+import fi.vm.kapa.rova.client.webapi.WebApiClientException;
+import org.apache.oltu.oauth2.client.OAuthClient;
+import org.apache.oltu.oauth2.client.URLConnectionClient;
+import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
+import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.apache.oltu.oauth2.common.message.types.GrantType;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,22 +47,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.UUID;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.oltu.oauth2.client.OAuthClient;
-import org.apache.oltu.oauth2.client.URLConnectionClient;
-import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
-import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
-import fi.vm.kapa.rova.client.webapi.WebApiClientException;
 
 public abstract class AbstractWebApiRiClient {
 
@@ -100,7 +97,7 @@ public abstract class AbstractWebApiRiClient {
             OAuthClientRequest.TokenRequestBuilder requestBuilder = OAuthClientRequest.tokenLocation(config.getTokenUrl()).setGrantType(GrantType.AUTHORIZATION_CODE).setClientId(config.getClientId()).setClientSecret(config.getoAuthSecret()).setCode(codeParam);
             
             OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-            oAuthResponse = oAuthClient.accessToken(requestBuilder.setRedirectURI(config.getOauthRedirect()).buildBodyMessage(), OAuthJSONAccessTokenResponse.class);
+            oAuthResponse = oAuthClient.accessToken(requestBuilder.setRedirectURI(config.getoAuthRedirect()).buildBodyMessage(), OAuthJSONAccessTokenResponse.class);
         } catch (OAuthProblemException | OAuthSystemException e) {
             handleException("Unable to get token", e);
         }
@@ -125,14 +122,13 @@ public abstract class AbstractWebApiRiClient {
             ObjectMapper mapper = new ObjectMapper();
             this.registerToken = mapper.readValue(tokenStr, RegisterToken.class);
 
-            
             return config.getAuthorizeUrl() //
                     + "?client_id=" + config.getClientId() //
                     + "&response_type=code"//
                     + "&requestId=" + requestId//
                     + "&user=" + this.registerToken.userId //
                     + "&state=" + stateParameter //
-                    + "&redirect_uri=" + config.getOauthRedirect();
+                    + "&redirect_uri=" + config.getoAuthRedirect();
         } catch (IOException e) {
             handleException(e);
         }
