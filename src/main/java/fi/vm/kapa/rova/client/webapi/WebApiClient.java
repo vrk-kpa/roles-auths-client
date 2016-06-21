@@ -22,10 +22,12 @@
  */
 package fi.vm.kapa.rova.client.webapi;
 
+import java.io.Serializable;
+
 /**
  * Shared parent methods for HpaWebApiClient and YpaWebClient.
  */
-public interface WebApiClient {
+public interface WebApiClient extends Serializable {
      //Initiates a session with webApi. Stores OAuth userid and sessionid for later requests.
 
     /**
