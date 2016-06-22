@@ -34,6 +34,7 @@ public class HeaderDetails {
     protected String version;
 
     public HeaderDetails() {
+        // NOP
     }
 
     public String getSubsystemCode() {

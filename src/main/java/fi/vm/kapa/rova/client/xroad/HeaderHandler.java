@@ -62,6 +62,7 @@ public class HeaderHandler implements SOAPHandler<SOAPMessageContext> {
         this.serviceDetails = serviceDetails;
     }
 
+    @Override
     public boolean handleMessage(SOAPMessageContext messageContext) {
 
         HeaderDetails cd = config.getClientDetails();
@@ -156,6 +157,8 @@ public class HeaderHandler implements SOAPHandler<SOAPMessageContext> {
     }
 
     @Override
-    public void close(MessageContext messageContext) { }
+    public void close(MessageContext messageContext) {
+        // NOP
+    }
 
 }

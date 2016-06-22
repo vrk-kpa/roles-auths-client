@@ -140,20 +140,22 @@ public abstract class AbstractWebApiRiClient {
         clientActiveState = false;
         try {
             String sessionId = this.registerToken.sessionId;
-            if (sessionId != null) {
-                String path = getUnRegisterUrl(sessionId);
-                URL url = new URL(config.getBaseUrl(), path);
-                HttpURLConnection yc = (HttpURLConnection) url.openConnection();
-                yc.setRequestProperty("X-AsiointivaltuudetAuthorization", getAuthorizationValue(path));
-                String resultString = null;
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()))) {
-                    String s;
-                    while ((s = in.readLine()) != null) {
-                        resultString = s;
-                    }
-                }
-                return (resultString != null && "true".equalsIgnoreCase(resultString));
+            if (sessionId == null) {
+                return false;
             }
+            String path = getUnRegisterUrl(sessionId);
+            URL url = new URL(config.getBaseUrl(), path);
+            HttpURLConnection yc = (HttpURLConnection) url.openConnection();
+            yc.setRequestProperty("X-AsiointivaltuudetAuthorization", getAuthorizationValue(path));
+            String resultString = null;
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()))) {
+                String s;
+                while ((s = in.readLine()) != null) {
+                    resultString = s;
+                }
+            }
+            return (resultString != null && "true".equalsIgnoreCase(resultString));
+
         } catch (IOException e) {
             handleException("Unregisterig failed", e);
         }
