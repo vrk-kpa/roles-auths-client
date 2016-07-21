@@ -38,7 +38,7 @@ import java.util.List;
  */
 public abstract class AbstractRiClient {
 
-    protected ArrayList<EndPoint> endPoints = new ArrayList<>();
+    protected List<EndPoint> endPoints = new ArrayList<>();
 
     protected HeaderHandler headerHandler;
 
