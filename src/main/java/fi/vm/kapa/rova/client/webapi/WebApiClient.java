@@ -45,11 +45,30 @@ public interface WebApiClient extends Serializable {
      * Terminates a session with webApi.
      * Returns true for successful termination. E
      *
-     * @return URL for Rova WebApi selection screen.
      * @throws WebApiClientException
      */
     Boolean unregister() throws WebApiClientException;
 
+    /**
+     * Initiates a session with webApi using transfer token from existing web api session.
+     * Stores OAuth userid and sessionid for later requests.
+     * Return a URL for Rova WebApi selection screen. End user should be directed there for
+     * principal selection.
+     *
+     * @param requestId
+     * @return URL for Rova WebApi selection screen.
+     * @throws WebApiClientException
+     */
+    String registerTransfer(String transferToken, String requestId) throws WebApiClientException;
+
+    /**
+     * Requests transfer token for current web api session.
+     * Returns transfer token as String.
+     *
+     * @return URL for Rova WebApi selection screen.
+     * @throws WebApiClientException
+     */
+    String getTransferToken() throws WebApiClientException;
 
     /**
      * Get OAuth access token and store it in this client.

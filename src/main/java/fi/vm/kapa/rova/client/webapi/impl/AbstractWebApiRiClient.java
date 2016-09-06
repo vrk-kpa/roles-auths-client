@@ -57,7 +57,7 @@ public abstract class AbstractWebApiRiClient {
     private RegisterToken registerToken;
 
     protected String accessToken;
-    
+
     private String stateParameter = UUID.randomUUID().toString();
 
     private static class RegisterToken {
@@ -76,7 +76,7 @@ public abstract class AbstractWebApiRiClient {
     }
 
     private boolean clientActiveState;
-    
+
     public AbstractWebApiRiClient(WebApiClientConfig config, String delegateId) {
         this.config = config;
         this.delegateId = delegateId;
@@ -86,8 +86,12 @@ public abstract class AbstractWebApiRiClient {
 
     protected abstract String getUnRegisterUrl(String sessionId);
 
-    public void getToken(String codeParam,  String stateParam) throws WebApiClientException {
-        if(!stateParameter.equals(stateParam)) {
+    protected abstract String getTransferUrl(String sessionId);
+
+    protected abstract String getRegisterTransferUrl(String transferToken);
+
+    public void getToken(String codeParam, String stateParam) throws WebApiClientException {
+        if (!stateParameter.equals(stateParam)) {
             clientActiveState = false;
             throw new WebApiClientException("Mismatching OAuth state parameter. Expected state=" + stateParameter);
         }
@@ -95,7 +99,7 @@ public abstract class AbstractWebApiRiClient {
         OAuthJSONAccessTokenResponse oAuthResponse = null;
         try {
             OAuthClientRequest.TokenRequestBuilder requestBuilder = OAuthClientRequest.tokenLocation(config.getTokenUrl()).setGrantType(GrantType.AUTHORIZATION_CODE).setClientId(config.getClientId()).setClientSecret(config.getoAuthSecret()).setCode(codeParam);
-            
+
             OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
             oAuthResponse = oAuthClient.accessToken(requestBuilder.setRedirectURI(config.getoAuthRedirect()).buildBodyMessage(), OAuthJSONAccessTokenResponse.class);
         } catch (OAuthProblemException | OAuthSystemException e) {
@@ -104,21 +108,31 @@ public abstract class AbstractWebApiRiClient {
         this.accessToken = oAuthResponse.getAccessToken();
     }
 
+    public String getTransferToken() throws WebApiClientException {
+        try {
+            String sessionId = this.registerToken.sessionId;
+            if (sessionId == null) {
+                throw new WebApiClientException("No active session found for transfer.");
+            }
+            return getResultString(getTransferUrl(sessionId));
+        } catch (IOException e) {
+            handleException("Transfer Token fetching failed", e);
+        }
+        return null;
+    }
+
+    public String registerTransfer(String transferToken, String requestId) throws WebApiClientException {
+        return actuallyRegister(getPathWithParams(getRegisterTransferUrl(transferToken), requestId), requestId);
+    }
+
     public String register(String requestId) throws WebApiClientException {
+        return actuallyRegister(getPathWithParams(getRegisterUrl(), requestId), requestId);
+    }
+
+    private String actuallyRegister(String path, String requestId) throws WebApiClientException {
         try {
             clientActiveState = true;
-            String pathWithParams = getPathWithParams(getRegisterUrl(), requestId);
-            URL url = new URL(config.getBaseUrl(), pathWithParams);
-            HttpURLConnection yc = (HttpURLConnection) url.openConnection();
-            yc.setRequestProperty("X-AsiointivaltuudetAuthorization", getAuthorizationValue(pathWithParams));
-
-            String tokenStr = null;
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()))) {
-                String s;
-                while ((s = in.readLine()) != null) {
-                    tokenStr = s;
-                }
-            }
+            String tokenStr = getResultString(getPathWithParams(path, requestId));
             ObjectMapper mapper = new ObjectMapper();
             this.registerToken = mapper.readValue(tokenStr, RegisterToken.class);
 
@@ -143,19 +157,8 @@ public abstract class AbstractWebApiRiClient {
             if (sessionId == null) {
                 return false;
             }
-            String path = getUnRegisterUrl(sessionId);
-            URL url = new URL(config.getBaseUrl(), path);
-            HttpURLConnection yc = (HttpURLConnection) url.openConnection();
-            yc.setRequestProperty("X-AsiointivaltuudetAuthorization", getAuthorizationValue(path));
-            String resultString = null;
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()))) {
-                String s;
-                while ((s = in.readLine()) != null) {
-                    resultString = s;
-                }
-            }
+            String resultString = getResultString(getUnRegisterUrl(sessionId));
             return (resultString != null && "true".equalsIgnoreCase(resultString));
-
         } catch (IOException e) {
             handleException("Unregisterig failed", e);
         }
@@ -204,6 +207,20 @@ public abstract class AbstractWebApiRiClient {
     protected void handleException(String msg, Throwable t) throws WebApiClientException {
         clientActiveState = false;
         throw new WebApiClientException(msg, t);
+    }
+
+    private String getResultString(String path) throws IOException {
+        URL url = new URL(config.getBaseUrl(), path);
+        HttpURLConnection yc = (HttpURLConnection) url.openConnection();
+        yc.setRequestProperty("X-AsiointivaltuudetAuthorization", getAuthorizationValue(path));
+        String resultString = null;
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()))) {
+            String s;
+            while ((s = in.readLine()) != null) {
+                resultString = s;
+            }
+        }
+        return resultString;
     }
 
     protected boolean isClientActive() throws WebApiClientException {

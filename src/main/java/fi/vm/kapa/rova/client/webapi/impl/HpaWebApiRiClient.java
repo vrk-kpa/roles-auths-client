@@ -64,6 +64,14 @@ public class HpaWebApiRiClient extends AbstractWebApiRiClient implements HpaWebA
         return "/service/hpa/user/unregister/" + sessionId;
     }
 
+    protected String getTransferUrl(String sessionId) {
+        return "/service/hpa/user/transfer/token/" + sessionId;
+    }
+
+    protected String getRegisterTransferUrl(String transferToken) {
+        return "/service/hpa/user/register/transfer/"+transferToken+"/"+config.getClientId()+"/"+delegateId;
+    }
+
     @Override
     public List<Principal> getPrincipals(String requestId) throws WebApiClientException {
         List<Principal> result = null;

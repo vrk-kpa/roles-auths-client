@@ -62,6 +62,14 @@ public class YpaWebApiRiClient extends AbstractWebApiRiClient implements YpaWebA
         return "/service/ypa/user/unregister/" + sessionId;
     }
 
+    protected String getTransferUrl(String sessionId) {
+        return "/service/ypa/user/transfer/token/" + sessionId;
+    }
+
+    protected String getRegisterTransferUrl(String transferToken) {
+        return "/service/ypa/user/register/transfer/"+transferToken+"/"+config.getClientId()+"/"+delegateId;
+    }
+
     @Override
     public List<YpaOrganization> getCompanies(String requestId) throws WebApiClientException {
         List<YpaOrganization> result = null;
