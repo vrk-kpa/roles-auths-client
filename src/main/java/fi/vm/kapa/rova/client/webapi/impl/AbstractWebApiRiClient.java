@@ -52,7 +52,7 @@ public abstract class AbstractWebApiRiClient {
 
     protected final static String HMAC_ALGORITHM = "HmacSHA256";
     protected final WebApiClientConfig config;
-    protected String delegateId;
+    protected final String delegateId;
 
     private RegisterToken registerToken;
 
@@ -228,5 +228,9 @@ public abstract class AbstractWebApiRiClient {
             throw new WebApiClientException("Invalid request, client in inactive state");
         }
         return true;
+    }
+
+    public String getDelegateId() {
+        return this.delegateId;
     }
 }

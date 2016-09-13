@@ -79,4 +79,9 @@ public interface WebApiClient extends Serializable {
      */
     void getToken(String codeParam, String stateParam) throws WebApiClientException;
 
+    /**
+     * Get delegate id that was provided in the client initialization.
+     * @return String;
+     */
+    String getDelegateId();
 }
