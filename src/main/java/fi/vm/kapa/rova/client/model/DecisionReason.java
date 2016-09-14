@@ -61,4 +61,11 @@ public class DecisionReason {
     public String getValueType() {
         return valueType;
     }
+
+	@Override
+	public String toString() {
+		return "DecisionReason [reasonRule=" + reasonRule + ", reasonValue=" + reasonValue + ", valueType=" + valueType
+				+ "]";
+	}
+    
 }

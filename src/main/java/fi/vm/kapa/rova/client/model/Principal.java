@@ -56,5 +56,10 @@ public class Principal {
         return name;
     }
 
+	@Override
+	public String toString() {
+		return "Principal [personId=" + personId + ", name=" + name + "]";
+	}
+
 }
 

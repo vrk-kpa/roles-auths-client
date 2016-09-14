@@ -56,4 +56,10 @@ public class Authorization {
     public Set<DecisionReason> getReasons() {
         return reasons;
     }
+
+	@Override
+	public String toString() {
+		return "Authorization [result=" + result + ", reasons=" + reasons + "]";
+	}
+    
 }

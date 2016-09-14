@@ -63,6 +63,11 @@ public class YpaOrganization {
      */
     public List<String> getRoles() {
             return roles;
-        }
+    }
+
+	@Override
+	public String toString() {
+		return "YpaOrganization [name=" + name + ", identifier=" + identifier + ", roles=" + roles + "]";
+	}
 
 }
