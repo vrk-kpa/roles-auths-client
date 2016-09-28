@@ -144,4 +144,11 @@
         </plugins>
     </build>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>vrk-ci</id>
+            <name>vrk-ci-snapshots</name>
+            <url>https://ci.kapa.ware.fi/artifactory/jenkins-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
