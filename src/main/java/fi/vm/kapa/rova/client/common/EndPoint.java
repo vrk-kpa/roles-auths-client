@@ -38,8 +38,13 @@ public class EndPoint {
 
     public EndPoint(Server server, String path) {
         this.server = server;
-        if (path != null && ! path.startsWith("/")) {
-            this.path = "/" + path;
+        if (path != null) {
+            if (!path.startsWith("/")) {
+                this.path = "/" + path;
+                return;
+            }
+
+            this.path = path;
         }
     }
 
@@ -53,8 +58,7 @@ public class EndPoint {
 
     @Override
     public String toString() {
-        return String.format("%s://%s:%d%s", ((server.isSecure()) ? "https": "http"),
-                server.getHost(), server.getPort(), ((path != null) ? path : "/"));
+        return String.format("%s://%s:%d%s", ((server.isSecure()) ? "https" : "http"), server.getHost(), server.getPort(), ((path != null) ? path : "/"));
     }
 
 }
