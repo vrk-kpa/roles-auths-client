@@ -57,4 +57,12 @@ public class ClientHeaderDetails extends HeaderDetails {
         this.memberCode = (String) properties.get(MEMBER_CODE_KEY);
         this.version = (String) properties.get(VERSION_KEY);
     }
+
+    public ClientHeaderDetails(String xRoadInstance, String memberClass, String memberCode, String subsystemCode, String version) {
+        this.xRoadInstance = xRoadInstance;
+        this.memberClass = memberClass;
+        this.memberCode = memberCode;
+        this.subsystemCode = subsystemCode;
+        this.version = version;
+    }
 }

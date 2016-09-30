@@ -37,6 +37,14 @@ public class HeaderDetails {
         // NOP
     }
 
+    public HeaderDetails(String xRoadInstance, String memberClass, String memberCode, String subsystemCode, String version) {
+        this.xRoadInstance = xRoadInstance;
+        this.memberClass = memberClass;
+        this.memberCode = memberCode;
+        this.subsystemCode = subsystemCode;
+        this.version = version;
+    }
+
     public String getSubsystemCode() {
         return subsystemCode;
     }
