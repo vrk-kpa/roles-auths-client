@@ -121,15 +121,15 @@ public abstract class AbstractWebApiRiClient {
         return null;
     }
 
-    public String registerTransfer(String transferToken, String requestId) throws WebApiClientException {
-        return actuallyRegister(getPathWithParams(getRegisterTransferUrl(transferToken), requestId), requestId);
+    public String registerTransfer(String transferToken, String requestId, String userInterfaceLanguage) throws WebApiClientException {
+        return actuallyRegister(getPathWithParams(getRegisterTransferUrl(transferToken), requestId), requestId, userInterfaceLanguage);
     }
 
-    public String register(String requestId) throws WebApiClientException {
-        return actuallyRegister(getPathWithParams(getRegisterUrl(), requestId), requestId);
+    public String register(String requestId, String userInterfaceLanguage) throws WebApiClientException {
+        return actuallyRegister(getPathWithParams(getRegisterUrl(), requestId), requestId, userInterfaceLanguage);
     }
 
-    private String actuallyRegister(String path, String requestId) throws WebApiClientException {
+    private String actuallyRegister(String path, String requestId, String userInterfaceLanguage) throws WebApiClientException {
         try {
             clientActiveState = true;
             String tokenStr = getResultString(getPathWithParams(path, requestId));
@@ -142,7 +142,8 @@ public abstract class AbstractWebApiRiClient {
                     + "&requestId=" + requestId//
                     + "&user=" + this.registerToken.userId //
                     + "&state=" + stateParameter //
-                    + "&redirect_uri=" + config.getoAuthRedirect();
+                    + "&redirect_uri=" + config.getoAuthRedirect() //
+                    + (userInterfaceLanguage != null ? "&lang=" + userInterfaceLanguage : "");
         } catch (IOException e) {
             handleException(e);
         }
@@ -189,7 +190,6 @@ public abstract class AbstractWebApiRiClient {
 
     protected String getPathWithParams(String path, String requestId, String... issues) {
         StringBuilder pathBuilder = new StringBuilder(path).append("?requestId=").append(requestId);
-
         for (String issue : issues) {
             if (issue != null) {
                 pathBuilder.append("&issues=").append(issue);

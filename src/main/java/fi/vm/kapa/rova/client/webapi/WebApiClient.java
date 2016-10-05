@@ -36,10 +36,11 @@ public interface WebApiClient extends Serializable {
      * principal selection.
      *
      * @param requestId
+     * @param userInterfaceLanguage Language code (ISO 639) for the WebApi selection screen, or null to use the default language.
      * @return URL for Rova WebApi selection screen.
      * @throws WebApiClientException
      */
-    String register(String requestId) throws WebApiClientException;
+    String register(String requestId, String userInterfaceLanguage) throws WebApiClientException;
 
     /**
      * Terminates a session with webApi.
@@ -56,10 +57,11 @@ public interface WebApiClient extends Serializable {
      * principal selection.
      *
      * @param requestId
+     * @param userInterfaceLanguage Language code (ISO 639) for the WebApi selection screen, or null to use the default language.
      * @return URL for Rova WebApi selection screen.
      * @throws WebApiClientException
      */
-    String registerTransfer(String transferToken, String requestId) throws WebApiClientException;
+    String registerTransfer(String transferToken, String requestId, String userInterfaceLanguage) throws WebApiClientException;
 
     /**
      * Requests transfer token for current web api session.
