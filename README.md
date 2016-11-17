@@ -8,3 +8,4 @@ Build the project using maven as follows:
 
     mvn clean package javadoc:jar assembly:single
 
+It's simple, if it jiggles, it's fat. -- Arnold Schwarzenegger
