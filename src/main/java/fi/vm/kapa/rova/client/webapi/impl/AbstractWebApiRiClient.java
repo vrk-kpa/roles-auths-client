@@ -122,11 +122,11 @@ public abstract class AbstractWebApiRiClient {
     }
 
     public String registerTransfer(String transferToken, String requestId, String userInterfaceLanguage) throws WebApiClientException {
-        return actuallyRegister(getPathWithParams(getRegisterTransferUrl(transferToken), requestId), requestId, userInterfaceLanguage);
+        return actuallyRegister(getRegisterTransferUrl(transferToken), requestId, userInterfaceLanguage);
     }
 
     public String register(String requestId, String userInterfaceLanguage) throws WebApiClientException {
-        return actuallyRegister(getPathWithParams(getRegisterUrl(), requestId), requestId, userInterfaceLanguage);
+        return actuallyRegister(getRegisterUrl(), requestId, userInterfaceLanguage);
     }
 
     private String actuallyRegister(String path, String requestId, String userInterfaceLanguage) throws WebApiClientException {
