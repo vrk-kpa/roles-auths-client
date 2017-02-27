@@ -93,6 +93,10 @@ public class HeaderHandler implements SOAPHandler<SOAPMessageContext> {
                         .addHeaderElement(idElement.getName());
                 idHeaderElement.addTextNode(idElement.getValue());
 
+                JAXBElement<String> protocolVersionElement = factory.createProtocolVersion("4.0");
+                SOAPHeaderElement protocolVersionHeaderElement = header.addHeaderElement(protocolVersionElement.getName());
+                protocolVersionHeaderElement.addTextNode(protocolVersionElement.getValue());
+
                 JAXBElement<String> userIdElement = factory
                         .createUserId(userId);
                 SOAPHeaderElement uidHeaderElement = header
