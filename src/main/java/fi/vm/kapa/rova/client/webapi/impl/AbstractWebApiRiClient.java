@@ -175,6 +175,7 @@ public abstract class AbstractWebApiRiClient {
         return config.getClientId() + " " + timestamp + " " + hash(path + " " + timestamp, config.getApiKey());
     }
 
+    @SuppressWarnings("Duplicates")
     private String hash(String data, String key) throws IOException {
         try {
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
@@ -221,13 +222,6 @@ public abstract class AbstractWebApiRiClient {
             }
         }
         return resultString;
-    }
-
-    protected boolean isClientActive() throws WebApiClientException {
-        if (!clientActiveState) {
-            throw new WebApiClientException("Invalid request, client in inactive state");
-        }
-        return true;
     }
 
     public String getDelegateId() {
