@@ -22,6 +22,8 @@
  */
 package fi.vm.kapa.rova.client.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,6 +31,7 @@ import java.util.Set;
  * Authorization tells whether queried operation is allowed or disallowed. Reasons for
  * disallowing are given, if service configuration permits disclosing them.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Authorization {
 
     public enum Result {
