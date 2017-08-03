@@ -20,31 +20,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client.xroad;
+package fi.vm.kapa.rova.client.model;
 
-import fi.vm.kapa.rova.client.model.Authorization;
-import fi.vm.kapa.rova.client.model.AuthorizationList;
-
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
- * Client interface for fetching information required when working on behalf of an other person.
+ * AuthorizationList contains roles which user have on behalf of another.
+ * Reasons for not providing any roles are given, if service configuration permits disclosing them.
  */
-public interface HpaXRoadClient {
-    /**
-     * @param userId user identifier
-     * @param delegateId personal identification number of delegate
-     * @param principalId personal identification number of principal
-     * @param issue possible issues that should be checked
-     * @return boolean value if delegate is authorized or not
-     */
-    Authorization isAuthorized(String userId, String delegateId, String principalId, Set<String> issue);
+public class AuthorizationList {
 
-    /**
-     * @param userId user identifier
-     * @param delegateId personal identification number of delegate
-     * @param principalId personal identification number of principal
-     * @return AuthorizationList containing authorization roles for delegate on behalf of principal
-     */
-    AuthorizationList getAuthorizationList(String userId, String delegateId, String principalId);
+    private final List<String> roles;
+    private final Set<DecisionReason> reasons;
+
+    @SuppressWarnings("unused")
+    private AuthorizationList() {
+        this.roles = null;
+        this.reasons = new HashSet<>();
+    }
+
+    public AuthorizationList(List<String> roles) {
+        this.roles = roles;
+        this.reasons = new HashSet<>();
+    }
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public Set<DecisionReason> getReasons() {
+        return reasons;
+    }
+
+    @Override
+    public String toString() {
+        return "AuthorizationList [roles=" + roles + ", reasons=" + reasons + "]";
+    }
+
 }

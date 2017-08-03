@@ -25,6 +25,7 @@ package fi.vm.kapa.rova.client.webapi.impl;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.kapa.rova.client.model.Authorization;
+import fi.vm.kapa.rova.client.model.AuthorizationList;
 import fi.vm.kapa.rova.client.model.Principal;
 import fi.vm.kapa.rova.client.webapi.HpaWebApiClient;
 import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
@@ -106,6 +107,26 @@ public class HpaWebApiRiClient extends AbstractWebApiRiClient implements HpaWebA
             OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
             result = mapper.readValue(resourceResponse.getBody(), Authorization.class);
+        } catch (IOException | OAuthProblemException | OAuthSystemException e) {
+            handleException(e);
+        }
+        return result;
+    }
+
+    @Override
+    public AuthorizationList getAuthorizationList(String principalId, String requestId)
+            throws WebApiClientException {
+        AuthorizationList result = null;
+        try {
+            OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
+            String pathWithParams = getPathWithParams("/service/hpa/api/authorizationlist/" + getOauthSessionId() + "/" + principalId, requestId);
+
+            OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString()).setAccessToken(accessToken).buildQueryMessage();
+            bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization", getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
+
+            OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+
+            result = mapper.readValue(resourceResponse.getBody(), AuthorizationList.class);
         } catch (IOException | OAuthProblemException | OAuthSystemException e) {
             handleException(e);
         }

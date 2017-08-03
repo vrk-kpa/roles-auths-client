@@ -25,6 +25,7 @@ package fi.vm.kapa.rova.client.webapi;
 import java.util.List;
 
 import fi.vm.kapa.rova.client.model.Authorization;
+import fi.vm.kapa.rova.client.model.AuthorizationList;
 import fi.vm.kapa.rova.client.model.Principal;
 
 /**
@@ -52,5 +53,16 @@ public interface HpaWebApiClient extends WebApiClient {
      * @throws WebApiClientException
      */
     Authorization getAuthorization(String principalId, String requestId, String... issue)
+            throws WebApiClientException;
+
+    /**
+     * Get authorizationList for selected user.
+     *
+     * @param principalId Personal Identity Code identifying the principal
+     * @param requestId
+     * @return AuthorizationList
+     * @throws WebApiClientException
+     */
+    AuthorizationList getAuthorizationList(String principalId, String requestId)
             throws WebApiClientException;
 }

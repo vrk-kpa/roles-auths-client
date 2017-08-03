@@ -28,15 +28,21 @@ import fi.vm.kapa.rova.client.common.RovaServiceDetails;
 import fi.vm.kapa.rova.client.common.RovaServices;
 import fi.vm.kapa.rova.client.common.Server;
 import fi.vm.kapa.rova.client.model.Authorization;
+import fi.vm.kapa.rova.client.model.AuthorizationList;
 import fi.vm.kapa.rova.client.model.DecisionReason;
 import fi.vm.kapa.rova.client.xroad.HpaXRoadClient;
 import fi.vm.kapa.rova.client.xroad.XRoadClientConfig;
 import fi.vm.kapa.xml.rova.api.authorization.*;
+import fi.vm.kapa.xml.rova.api.authorization.DecisionReasonType;
+import fi.vm.kapa.xml.rova.api.authorization.ObjectFactory;
+import fi.vm.kapa.xml.rova.api.authorization.Request;
+import fi.vm.kapa.xml.rova.api.authorization.list.*;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import javax.xml.ws.handler.HandlerResolver;
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -46,7 +52,11 @@ public class HpaXRoadRiClient extends AbstractRiClient implements HpaXRoadClient
 
     private RovaAuthorizationService_Service rovaAuthorizationService = new RovaAuthorizationService_Service();
 
+    private RovaAuthorizationListService_Service rovaAuthorizationListService = new RovaAuthorizationListService_Service();
+
     private ObjectFactory factory = new ObjectFactory();
+
+    private fi.vm.kapa.xml.rova.api.authorization.list.ObjectFactory authorizationListFactory = new fi.vm.kapa.xml.rova.api.authorization.list.ObjectFactory();
 
     public HpaXRoadRiClient(XRoadClientConfig config) {
         RovaServiceDetails details = RovaServices.getDetails(RovaServices.RovaService.AUTHORIZATION.name());
@@ -103,7 +113,46 @@ public class HpaXRoadRiClient extends AbstractRiClient implements HpaXRoadClient
         return auth;
     }
 
+    @Override
+    public AuthorizationList getAuthorizationList(String userId, String delegateId, String principalId) {
+        if (userId == null || delegateId == null || principalId == null) {
+            throw new IllegalArgumentException("null value in required argument.");
+        }
+        RovaAuthorizationListPortType port = rovaAuthorizationListService.getRovaAuthorizationListPort();
+        BindingProvider bp = (BindingProvider) port;
+        bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getNextEndpoint());
 
+        Holder<fi.vm.kapa.xml.rova.api.authorization.list.Request> request = new Holder<>(authorizationListFactory.createRequest());
+        Holder<RovaAuthorizationListResponse> response = new Holder(factory.createRovaAuthorizationResponse());
+        request.value.setDelegateIdentifier(delegateId);
+        request.value.setPrincipalIdentifier(principalId);
+        headerHandler.setUserId(userId);
 
+        port.rovaAuthorizationListService(request, response);
 
+        RovaAuthorizationListResponse authResult = null;
+        if (response.value != null) {
+            authResult = response.value;
+        }
+
+        AuthorizationList auth;
+        if (authResult.getRoles().getRoles() != null && authResult.getRoles().getRoles().size() > 0) {
+            auth = new AuthorizationList(authResult.getRoles().getRoles());
+        } else if (authResult.getRoles().getRoles() != null && authResult.getRoles().getRoles().size() == 0) {
+            auth = new AuthorizationList(new ArrayList<>());
+            for (fi.vm.kapa.xml.rova.api.authorization.list.DecisionReasonType reason : response.value.getReason()) {
+                auth.getReasons().add(new DecisionReason(reason.getRule(), reason.getValue(), null));
+            }
+        } else {
+            String message = null;
+            if (response.value != null) {
+                JAXBElement<String> messageElem = response.value.getExceptionMessage();
+                if (messageElem != null) {
+                    message = messageElem.getValue();
+                }
+            }
+            throw new ClientException("Unexpected response from server: " + message);
+        }
+        return auth;
+    }
 }
