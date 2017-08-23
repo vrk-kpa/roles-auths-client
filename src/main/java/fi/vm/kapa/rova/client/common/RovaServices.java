@@ -36,6 +36,8 @@ public class RovaServices {
         services = new HashMap();
         services.put(RovaService.AUTHORIZATION.name(),
                 new RovaServiceDetails("rovaAuthorizationService", "/rova/authorization"));
+        services.put(RovaService.AUTHORIZATION_LIST.name(),
+                new RovaServiceDetails("rovaAuthorizationListService", "/rova/authorizationList"));
         services.put(RovaService.ROLES.name(),
                 new RovaServiceDetails("rovaOrganizationalRolesService", "/rova/OrganizationalRoles"));
     }
@@ -53,6 +55,7 @@ public class RovaServices {
 
     public enum RovaService {
         AUTHORIZATION,
+        AUTHORIZATION_LIST,
         ROLES
     }
 
