@@ -58,17 +58,10 @@ public class HpaXRoadRiClient extends AbstractRiClient implements HpaXRoadClient
 
     private fi.vm.kapa.xml.rova.api.authorization.list.ObjectFactory authorizationListFactory = new fi.vm.kapa.xml.rova.api.authorization.list.ObjectFactory();
 
-    public HpaXRoadRiClient(XRoadClientConfig config) {
-        RovaServiceDetails details = RovaServices.getDetails(RovaServices.RovaService.AUTHORIZATION.name());
-        for (Server server : config.getServers()) {
-            endPoints.add(new EndPoint(server, details.getPath()));
-        }
-        HandlerResolver hs = createHandlerResolver(config, details);
-        rovaAuthorizationService.setHandlerResolver(hs);
+    private XRoadClientConfig clientConfig;
 
-        details = RovaServices.getDetails(RovaServices.RovaService.AUTHORIZATION_LIST.name());
-        hs = createHandlerResolver(config, details);
-        rovaAuthorizationListService.setHandlerResolver(hs);
+    public HpaXRoadRiClient(XRoadClientConfig config) {
+        this.clientConfig = config;
     }
 
     public Authorization isAuthorized(String userId, String delegateId, String principalId, Set<String> issues) {
@@ -76,10 +69,17 @@ public class HpaXRoadRiClient extends AbstractRiClient implements HpaXRoadClient
             throw new IllegalArgumentException("null value in required argument.");
         }
 
+        RovaServiceDetails details = RovaServices.getDetails(RovaServices.RovaService.AUTHORIZATION.name());
+        for (Server server : clientConfig.getServers()) {
+            endPoints.add(new EndPoint(server, details.getPath()));
+        }
+        details = RovaServices.getDetails(RovaServices.RovaService.AUTHORIZATION.name());
+        HandlerResolver hs = createHandlerResolver(clientConfig, details);
+        rovaAuthorizationService.setHandlerResolver(hs);
+
         RovaAuthorizationPortType port = rovaAuthorizationService.getRovaAuthorizationPort();
         BindingProvider bp = (BindingProvider) port;
         bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getNextEndpoint());
-
 
         Holder<Request> request = new Holder<>(factory.createRequest());
         Holder<RovaAuthorizationResponse> response = new Holder<>(factory.createRovaAuthorizationResponse());
@@ -124,9 +124,16 @@ public class HpaXRoadRiClient extends AbstractRiClient implements HpaXRoadClient
             throw new IllegalArgumentException("null value in required argument.");
         }
 
-        System.out.println(rovaAuthorizationListService.getHandlerResolver());
+        RovaServiceDetails details = RovaServices.getDetails(RovaServices.RovaService.AUTHORIZATION.name());
+        for (Server server : clientConfig.getServers()) {
+            endPoints.add(new EndPoint(server, details.getPath()));
+        }
+        details = RovaServices.getDetails(RovaServices.RovaService.AUTHORIZATION_LIST.name());
+        HandlerResolver hs = createHandlerResolver(clientConfig, details);
+        rovaAuthorizationListService.setHandlerResolver(hs);
 
         RovaAuthorizationListPortType port = rovaAuthorizationListService.getRovaAuthorizationListPort();
+
         BindingProvider bp = (BindingProvider) port;
         bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getNextEndpoint());
 
@@ -134,6 +141,7 @@ public class HpaXRoadRiClient extends AbstractRiClient implements HpaXRoadClient
         Holder<RovaAuthorizationListResponse> response = new Holder(factory.createRovaAuthorizationResponse());
         request.value.setDelegateIdentifier(delegateId);
         request.value.setPrincipalIdentifier(principalId);
+
         headerHandler.setUserId(userId);
 
         port.rovaAuthorizationListService(request, response);
