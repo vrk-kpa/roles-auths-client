@@ -22,21 +22,16 @@
  */
 package fi.vm.kapa.rova.client.xroad.impl;
 
-import fi.vm.kapa.rova.client.common.ClientException;
-import fi.vm.kapa.rova.client.common.EndPoint;
-import fi.vm.kapa.rova.client.common.RovaServiceDetails;
-import fi.vm.kapa.rova.client.common.RovaServices;
-import fi.vm.kapa.rova.client.common.Server;
+import fi.vm.kapa.rova.client.common.*;
 import fi.vm.kapa.rova.client.model.Authorization;
 import fi.vm.kapa.rova.client.model.AuthorizationList;
 import fi.vm.kapa.rova.client.model.DecisionReason;
 import fi.vm.kapa.rova.client.xroad.HpaXRoadClient;
 import fi.vm.kapa.rova.client.xroad.XRoadClientConfig;
 import fi.vm.kapa.xml.rova.api.authorization.*;
-import fi.vm.kapa.xml.rova.api.authorization.DecisionReasonType;
-import fi.vm.kapa.xml.rova.api.authorization.ObjectFactory;
-import fi.vm.kapa.xml.rova.api.authorization.Request;
-import fi.vm.kapa.xml.rova.api.authorization.list.*;
+import fi.vm.kapa.xml.rova.api.authorization.list.RovaAuthorizationListPortType;
+import fi.vm.kapa.xml.rova.api.authorization.list.RovaAuthorizationListResponse;
+import fi.vm.kapa.xml.rova.api.authorization.list.RovaAuthorizationListService_Service;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.ws.BindingProvider;

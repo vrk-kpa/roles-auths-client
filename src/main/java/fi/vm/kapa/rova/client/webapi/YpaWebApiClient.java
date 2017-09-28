@@ -22,9 +22,9 @@
  */
 package fi.vm.kapa.rova.client.webapi;
 
-import java.util.List;
-
 import fi.vm.kapa.rova.client.model.YpaOrganization;
+
+import java.util.List;
 
 /**
  * Client for YPA-api

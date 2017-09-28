@@ -22,7 +22,10 @@
  */
 package fi.vm.kapa.rova.client.xroad.impl;
 
-import fi.vm.kapa.rova.client.xroad.*;
+import fi.vm.kapa.rova.client.xroad.HpaXRoadClient;
+import fi.vm.kapa.rova.client.xroad.XRoadClientConfig;
+import fi.vm.kapa.rova.client.xroad.XRoadClientFactory;
+import fi.vm.kapa.rova.client.xroad.YpaXRoadClient;
 
 /**
  * Client factory for JAX-WS Reference Implementation clients.

@@ -22,11 +22,11 @@
  */
 package fi.vm.kapa.rova.client.webapi;
 
-import java.util.List;
-
 import fi.vm.kapa.rova.client.model.Authorization;
 import fi.vm.kapa.rova.client.model.AuthorizationList;
 import fi.vm.kapa.rova.client.model.Principal;
+
+import java.util.List;
 
 /**
  * Client for HPA-api.

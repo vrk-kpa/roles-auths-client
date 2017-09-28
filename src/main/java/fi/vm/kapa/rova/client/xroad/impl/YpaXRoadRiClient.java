@@ -22,19 +22,18 @@
  */
 package fi.vm.kapa.rova.client.xroad.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.JAXBElement;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
-import javax.xml.ws.handler.HandlerResolver;
-
 import fi.vm.kapa.rova.client.common.*;
 import fi.vm.kapa.rova.client.model.YpaOrganization;
 import fi.vm.kapa.rova.client.xroad.XRoadClientConfig;
 import fi.vm.kapa.rova.client.xroad.YpaXRoadClient;
 import fi.vm.kapa.xml.rova.api.orgroles.*;
+
+import javax.xml.bind.JAXBElement;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Holder;
+import javax.xml.ws.handler.HandlerResolver;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Client implementation for fetching information required when working on behalf of a company.

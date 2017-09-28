@@ -22,11 +22,12 @@
  */
 package fi.vm.kapa.rova.client.webapi.impl;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vm.kapa.rova.client.model.YpaOrganization;
+import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
+import fi.vm.kapa.rova.client.webapi.WebApiClientException;
+import fi.vm.kapa.rova.client.webapi.YpaWebApiClient;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -36,13 +37,10 @@ import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import fi.vm.kapa.rova.client.model.YpaOrganization;
-import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
-import fi.vm.kapa.rova.client.webapi.WebApiClientException;
-import fi.vm.kapa.rova.client.webapi.YpaWebApiClient;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class YpaWebApiRiClient extends AbstractWebApiRiClient implements YpaWebApiClient  {
 
