@@ -35,10 +35,9 @@ public class XRoadClientConfig {
     private RequestIdGenerator requestIdGenerator;
 
     /**
-     *
-     * @param clientDetails client header details
+     * @param clientDetails  client header details
      * @param serviceDetails service header details
-     * @param servers XRoad servers
+     * @param servers        XRoad servers
      * @see ClientHeaderDetails
      * @see ServiceHeaderDetails
      */

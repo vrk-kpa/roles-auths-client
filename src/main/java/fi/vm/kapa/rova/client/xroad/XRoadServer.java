@@ -39,6 +39,7 @@ public class XRoadServer implements Server {
     public XRoadServer(String host) {
         this.host = host;
     }
+
     public XRoadServer(String host, int port, boolean secure) {
         this.host = host;
         this.port = port;

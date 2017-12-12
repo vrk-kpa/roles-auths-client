@@ -43,7 +43,6 @@ public class DecisionReason {
     }
 
     /**
-     *
      * @return id of denying rule.
      */
     public String getReasonRule() {
@@ -51,7 +50,6 @@ public class DecisionReason {
     }
 
     /**
-     *
      * @return description of reason.
      */
     public String getReasonValue() {
@@ -62,10 +60,10 @@ public class DecisionReason {
         return valueType;
     }
 
-	@Override
-	public String toString() {
-		return "DecisionReason [reasonRule=" + reasonRule + ", reasonValue=" + reasonValue + ", valueType=" + valueType
-				+ "]";
-	}
-    
+    @Override
+    public String toString() {
+        return "DecisionReason [reasonRule=" + reasonRule + ", reasonValue=" + reasonValue + ", valueType=" + valueType
+                + "]";
+    }
+
 }

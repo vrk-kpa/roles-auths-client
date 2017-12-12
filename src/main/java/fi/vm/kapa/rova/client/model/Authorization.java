@@ -57,9 +57,9 @@ public class Authorization {
         return reasons;
     }
 
-	@Override
-	public String toString() {
-		return "Authorization [result=" + result + ", reasons=" + reasons + "]";
-	}
-    
+    @Override
+    public String toString() {
+        return "Authorization [result=" + result + ", reasons=" + reasons + "]";
+    }
+
 }

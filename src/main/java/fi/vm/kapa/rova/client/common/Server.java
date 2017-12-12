@@ -27,6 +27,8 @@ package fi.vm.kapa.rova.client.common;
  */
 public interface Server {
     String getHost();
+
     int getPort();
+
     boolean isSecure();
 }

@@ -48,7 +48,7 @@ public interface HpaWebApiClient extends WebApiClient {
      *
      * @param principalId Personal Identity Code identifying the principal
      * @param requestId
-     * @param issue URIs identifying issues
+     * @param issue       URIs identifying issues
      * @return Authorization
      * @throws WebApiClientException
      */

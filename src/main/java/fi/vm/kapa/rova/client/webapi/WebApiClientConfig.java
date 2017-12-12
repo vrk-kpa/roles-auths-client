@@ -47,14 +47,14 @@ public class WebApiClientConfig {
     /**
      * Constructor for config object.
      *
-     * @see Builder
-     * @param clientId service clientId
-     * @param baseUrl base URL of service's web front
-     * @param authorizeUrl URL for OAuth, (rova-web-api/oauth/authorize)
-     * @param tokenUrl URL for fetching OAuth access token (rova-web-api/oauth/token)
-     * @param apiKey service apiKey
-     * @param oAuthSecret service oAuthSecret
+     * @param clientId      service clientId
+     * @param baseUrl       base URL of service's web front
+     * @param authorizeUrl  URL for OAuth, (rova-web-api/oauth/authorize)
+     * @param tokenUrl      URL for fetching OAuth access token (rova-web-api/oauth/token)
+     * @param apiKey        service apiKey
+     * @param oAuthSecret   service oAuthSecret
      * @param oAuthRedirect URL to redirect to after principal selection
+     * @see Builder
      */
     public WebApiClientConfig(String clientId, URL baseUrl, String authorizeUrl, String tokenUrl,
                               String apiKey, String oAuthSecret, String oAuthRedirect) {
@@ -118,30 +118,37 @@ public class WebApiClientConfig {
             Validate.notBlank(oAuthRedirect, "oAuthRedirect must be non-blank");
             return new WebApiClientConfig(clientId, baseUrl, authorizeUrl, tokenUrl, apiKey, oAuthSecret, oAuthRedirect);
         }
+
         public Builder clientId(String clientId) {
             this.clientId = clientId;
             return this;
         }
+
         public Builder baseUrl(URL baseUrl) {
             this.baseUrl = baseUrl;
             return this;
         }
+
         public Builder authorizeUrl(String authorizeUrl) {
             this.authorizeUrl = authorizeUrl;
             return this;
         }
+
         public Builder tokenUrl(String tokenUrl) {
             this.tokenUrl = tokenUrl;
             return this;
         }
+
         public Builder apiKey(String apiKey) {
             this.apiKey = apiKey;
             return this;
         }
+
         public Builder oAuthSecret(String oAuthSecret) {
             this.oAuthSecret = oAuthSecret;
             return this;
         }
+
         public Builder oAuthRedirect(String oAuthRedirect) {
             this.oAuthRedirect = oAuthRedirect;
             return this;

@@ -27,5 +27,6 @@ package fi.vm.kapa.rova.client.xroad;
  */
 public interface XRoadClientFactory {
     HpaXRoadClient hpaClient();
+
     YpaXRoadClient ypaClient();
 }

@@ -41,7 +41,6 @@ public class Principal {
     }
 
     /**
-     *
      * @return Person identity code of this principal.
      */
     public String getPersonId() {
@@ -49,17 +48,16 @@ public class Principal {
     }
 
     /**
-     *
      * @return Name of this principal.
      */
     public String getName() {
         return name;
     }
 
-	@Override
-	public String toString() {
-		return "Principal [personId=" + personId + ", name=" + name + "]";
-	}
+    @Override
+    public String toString() {
+        return "Principal [personId=" + personId + ", name=" + name + "]";
+    }
 
 }
 

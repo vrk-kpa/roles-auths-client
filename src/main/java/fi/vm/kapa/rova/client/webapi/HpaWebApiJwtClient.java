@@ -20,31 +20,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client.xroad;
+package fi.vm.kapa.rova.client.webapi;
 
-import fi.vm.kapa.rova.client.model.Authorization;
-import fi.vm.kapa.rova.client.model.AuthorizationList;
-
-import java.util.Set;
-
-/**
- * Client interface for fetching information required when working on behalf of an other person.
- */
-public interface HpaXRoadClient {
-    /**
-     * @param userId      user identifier
-     * @param delegateId  personal identification number of delegate
-     * @param principalId personal identification number of principal
-     * @param issue       possible issues that should be checked
-     * @return boolean value if delegate is authorized or not
-     */
-    Authorization isAuthorized(String userId, String delegateId, String principalId, Set<String> issue);
+public interface HpaWebApiJwtClient extends HpaWebApiClient {
 
     /**
-     * @param userId      user identifier
-     * @param delegateId  personal identification number of delegate
-     * @param principalId personal identification number of principal
-     * @return AuthorizationList containing authorization roles for delegate on behalf of principal
+     * Get authorization Json Web Token for selected user with optional issues.
+     *
+     * @param principalId Personal Identity Code identifying the principal
+     * @param requestId
+     * @param issue       URIs identifying issues
+     * @return Authorization
+     * @throws WebApiClientException
      */
-    AuthorizationList getAuthorizationList(String userId, String delegateId, String principalId);
+    String getAuthorizationToken(String principalId, String requestId, String... issue)
+            throws WebApiClientException;
+
+    /**
+     * Get authorizationList Json Web Token for selected user.
+     *
+     * @param principalId Personal Identity Code identifying the principal
+     * @param requestId
+     * @return AuthorizationList
+     * @throws WebApiClientException
+     */
+    String getAuthorizationListToken(String principalId, String requestId)
+            throws WebApiClientException;
 }

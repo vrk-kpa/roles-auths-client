@@ -23,7 +23,6 @@
 package fi.vm.kapa.rova.client.webapi.impl;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.kapa.rova.client.model.YpaOrganization;
 import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
 import fi.vm.kapa.rova.client.webapi.WebApiClientException;
@@ -42,57 +41,26 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class YpaWebApiRiClient extends AbstractWebApiRiClient implements YpaWebApiClient  {
+public class YpaWebApiRiClient extends AbstractYpaWebApiRiClient implements YpaWebApiClient {
 
     public YpaWebApiRiClient(WebApiClientConfig config, String delegateId) {
         super(config, delegateId);
     }
 
-    private ObjectMapper mapper = new ObjectMapper();
-
-    @Override
-    protected String getRegisterUrl() {
-        return "/service/ypa/user/register/" + config.getClientId() + "/" + delegateId;
-    }
-
-    @Override
-    protected String getUnRegisterUrl(String sessionId) {
-        return "/service/ypa/user/unregister/" + sessionId;
-    }
-
-    protected String getTransferUrl(String sessionId) {
-        return "/service/ypa/user/transfer/token/" + sessionId;
-    }
-
-    protected String getRegisterTransferUrl(String transferToken) {
-        return "/service/ypa/user/register/transfer/"+transferToken+"/"+config.getClientId()+"/"+delegateId;
-    }
-
     @Override
     public List<YpaOrganization> getCompanies(String requestId) throws WebApiClientException {
-        List<YpaOrganization> result = null;
-        OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-        String pathWithParams = getPathWithParams("/service/ypa/api/organizationRoles/" + getOauthSessionId(), requestId);
-
-        try {
-            OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString()).setAccessToken(accessToken).buildQueryMessage();
-            bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization", getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
-
-            OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-
-            JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, YpaOrganization.class);
-            result =  mapper.readValue(resourceResponse.getBody(), resultType);
-        } catch (IOException | OAuthSystemException | OAuthProblemException e) {
-            handleException(e);
-        }
-        return result;
+        return getRolesResponse(getRequestPathWithParams(requestId, null, false));
     }
 
     @Override
     public List<YpaOrganization> getRoles(String requestId, String organizationId) throws WebApiClientException {
+        return getRolesResponse(getRequestPathWithParams(requestId, organizationId, false));
+    }
+
+
+    public List<YpaOrganization> getRolesResponse(String pathWithParams) throws WebApiClientException {
         List<YpaOrganization> result = null;
         OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-        String pathWithParams = getPathWithParams("/service/ypa/api/organizationRoles/" + getOauthSessionId() +"/"+ organizationId, requestId);
         try {
             OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString()).setAccessToken(accessToken).buildQueryMessage();
             bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization", getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
@@ -101,9 +69,11 @@ public class YpaWebApiRiClient extends AbstractWebApiRiClient implements YpaWebA
 
             JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, YpaOrganization.class);
             result = mapper.readValue(resourceResponse.getBody(), resultType);
-        } catch (IOException| OAuthProblemException | OAuthSystemException e) {
+        } catch (IOException | OAuthProblemException | OAuthSystemException e) {
             handleException(e);
         }
         return result;
     }
+
+
 }

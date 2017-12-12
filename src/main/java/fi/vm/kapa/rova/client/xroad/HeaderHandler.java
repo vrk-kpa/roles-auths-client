@@ -48,7 +48,7 @@ import java.util.Set;
  * Header handler class for JAX-WS reference implementation clients
  */
 public class HeaderHandler implements SOAPHandler<SOAPMessageContext> {
-    
+
     private ObjectFactory factory = new ObjectFactory();
     private static final Logger logger = LoggerFactory.getLogger(HeaderHandler.class);
 

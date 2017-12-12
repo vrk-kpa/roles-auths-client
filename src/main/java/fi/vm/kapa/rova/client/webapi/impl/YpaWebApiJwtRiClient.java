@@ -22,11 +22,11 @@
  */
 package fi.vm.kapa.rova.client.webapi.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.kapa.rova.client.model.Authorization;
-import fi.vm.kapa.rova.client.model.AuthorizationList;
-import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
+import fi.vm.kapa.rova.client.model.YpaOrganization;
+import fi.vm.kapa.rova.client.webapi.JwtUtil;
 import fi.vm.kapa.rova.client.webapi.WebApiClientException;
+import fi.vm.kapa.rova.client.webapi.WebApiClientJwtConfig;
+import fi.vm.kapa.rova.client.webapi.YpaWebApiClient;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -38,56 +38,49 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
-/**
- * Client implementation for querying possibilities to operate on behalf of another person.
- */
-public class HpaWebApiRiClient extends AbstractHpaWebApiRiClient {
+public class YpaWebApiJwtRiClient extends AbstractYpaWebApiRiClient implements YpaWebApiClient {
 
-    public HpaWebApiRiClient(WebApiClientConfig config, String delegateId) {
+    JwtUtil jwtUtil;
+
+    public YpaWebApiJwtRiClient(WebApiClientJwtConfig config, String delegateId) {
         super(config, delegateId);
+        this.jwtUtil = new JwtUtil(config);
     }
 
-    private ObjectMapper mapper = new ObjectMapper();
+    @Override
+    public List<YpaOrganization> getCompanies(String requestId) throws WebApiClientException {
+        String tokenResponse = getRolesTokenResponse(getRequestPathWithParams(requestId, null, true));
+        return jwtUtil.getCompanies(tokenResponse, delegateId);
+    }
 
     @Override
-    public Authorization getAuthorization(String principalId, String requestId, String... issues)
-            throws WebApiClientException {
-        Authorization result = null;
-        try {
-            OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-            String pathWithParams = getPathWithParams("/service/hpa/api/authorization/" + getOauthSessionId() + "/" + principalId, requestId, issues);
+    public List<YpaOrganization> getRoles(String requestId, String organizationId) throws WebApiClientException {
+        String tokenResponse = getRolesTokenResponse(getRequestPathWithParams(requestId, organizationId, true));
+        return jwtUtil.getCompanies(tokenResponse, delegateId);
+    }
 
+    public String getCompaniesToken(String requestId) throws WebApiClientException {
+        return getRolesTokenResponse(getRequestPathWithParams(requestId, null, true));
+    }
+
+    public String getRolesToken(String requestId, String organizationId) throws WebApiClientException {
+        return getRolesTokenResponse(getRequestPathWithParams(requestId, organizationId, true));
+    }
+
+    public String getRolesTokenResponse(String pathWithParams) throws WebApiClientException {
+        String result = null;
+        OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
+        try {
             OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString()).setAccessToken(accessToken).buildQueryMessage();
             bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization", getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
 
             OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-
-            result = mapper.readValue(resourceResponse.getBody(), Authorization.class);
+            result = resourceResponse.getBody();
         } catch (IOException | OAuthProblemException | OAuthSystemException e) {
             handleException(e);
         }
         return result;
     }
-
-    @Override
-    public AuthorizationList getAuthorizationList(String principalId, String requestId)
-            throws WebApiClientException {
-        AuthorizationList result = null;
-        try {
-            OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-            String pathWithParams = getPathWithParams("/service/hpa/api/authorizationlist/" + getOauthSessionId() + "/" + principalId, requestId);
-
-            OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString()).setAccessToken(accessToken).buildQueryMessage();
-            bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization", getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
-
-            OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-
-            result = mapper.readValue(resourceResponse.getBody(), AuthorizationList.class);
-        } catch (IOException | OAuthProblemException | OAuthSystemException e) {
-            handleException(e);
-        }
-        return result;
-    }
-
 }

@@ -67,6 +67,13 @@
             <artifactId>org.apache.oltu.oauth2.client</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <!-- JWT -->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>4.3.1</version>
+        </dependency>
+
         <!-- test deps -->
         <dependency>
             <groupId>junit</groupId>

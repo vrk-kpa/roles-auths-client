@@ -28,7 +28,7 @@ import java.io.Serializable;
  * Shared parent methods for HpaWebApiClient and YpaWebClient.
  */
 public interface WebApiClient extends Serializable {
-     //Initiates a session with webApi. Stores OAuth userid and sessionid for later requests.
+    //Initiates a session with webApi. Stores OAuth userid and sessionid for later requests.
 
     /**
      * Initiates a session with webApi. Stores OAuth userid and sessionid for later requests.
@@ -75,7 +75,7 @@ public interface WebApiClient extends Serializable {
     /**
      * Get OAuth access token and store it in this client.
      *
-     * @param codeParam OAuth response code received by end user after selection as query parameter
+     * @param codeParam  OAuth response code received by end user after selection as query parameter
      * @param stateParam OAuth response state received by end user after selection as query parameter
      * @throws WebApiClientException
      */
@@ -83,6 +83,7 @@ public interface WebApiClient extends Serializable {
 
     /**
      * Get delegate id that was provided in the client initialization.
+     *
      * @return String;
      */
     String getDelegateId();
