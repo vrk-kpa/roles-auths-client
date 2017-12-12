@@ -22,6 +22,8 @@
  */
 package fi.vm.kapa.rova.client.webapi;
 
+import org.apache.commons.lang3.Validate;
+
 import java.net.URL;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -34,24 +36,24 @@ import java.util.Base64;
 
 public class WebApiClientJwtConfig extends WebApiClientConfig {
 
-    private String publicKey;
-
-    private Key webApiPublicKey;
-
     private PublicKey webApiRSAPublicKey;
 
     private String serviceUUID;
 
     public WebApiClientJwtConfig(String clientId, URL baseUrl, String authorizeUrl, String tokenUrl, String apiKey,
-                                 String oAuthSecret, String oAuthRedirect, String publicKey)
-            throws InvalidKeySpecException, NoSuchAlgorithmException {
+                                 String oAuthSecret, String oAuthRedirect, String serviceUUID, String publicKey) {
 
         super(clientId, baseUrl, authorizeUrl, tokenUrl, apiKey, oAuthSecret, oAuthRedirect);
 
+        this.serviceUUID = serviceUUID;
         byte[] publicBytes = Base64.getDecoder().decode(publicKey);
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        webApiRSAPublicKey = keyFactory.generatePublic(keySpec);
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            webApiRSAPublicKey = keyFactory.generatePublic(keySpec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     public RSAPublicKey getRSAPublicKey() {
@@ -60,5 +62,76 @@ public class WebApiClientJwtConfig extends WebApiClientConfig {
 
     public String getServiceUUID() {
         return serviceUUID;
+    }
+
+    public static class Builder {
+        private String clientId;
+        private URL baseUrl;
+        private String authorizeUrl;
+        private String tokenUrl;
+        private String apiKey;
+        private String oAuthSecret;
+        private String oAuthRedirect;
+        private String serviceUUID;
+        private String publicKey;
+
+        public WebApiClientJwtConfig build() {
+            Validate.notBlank(clientId, "clientId must be non-blank");
+            Validate.notNull(baseUrl, "baseUrl must be non-null");
+            Validate.notBlank(authorizeUrl, "authorizeUrl must be non-blank");
+            Validate.notBlank(tokenUrl, "clientId must be non-blank");
+            Validate.notBlank(apiKey, "apiKey must be non-blank");
+            Validate.notBlank(oAuthSecret, "oAuthSecret must be non-blank");
+            Validate.notBlank(oAuthRedirect, "oAuthRedirect must be non-blank");
+            Validate.notBlank(serviceUUID, "oAuthSecret must be non-blank");
+            Validate.notBlank(publicKey, "oAuthRedirect must be non-blank");
+            return new WebApiClientJwtConfig(clientId, baseUrl, authorizeUrl, tokenUrl, apiKey, oAuthSecret,
+                    oAuthRedirect, serviceUUID, publicKey);
+        }
+
+        public WebApiClientJwtConfig.Builder clientId(String clientId) {
+            this.clientId = clientId;
+            return this;
+        }
+
+        public WebApiClientJwtConfig.Builder baseUrl(URL baseUrl) {
+            this.baseUrl = baseUrl;
+            return this;
+        }
+
+        public WebApiClientJwtConfig.Builder authorizeUrl(String authorizeUrl) {
+            this.authorizeUrl = authorizeUrl;
+            return this;
+        }
+
+        public WebApiClientJwtConfig.Builder tokenUrl(String tokenUrl) {
+            this.tokenUrl = tokenUrl;
+            return this;
+        }
+
+        public WebApiClientJwtConfig.Builder apiKey(String apiKey) {
+            this.apiKey = apiKey;
+            return this;
+        }
+
+        public WebApiClientJwtConfig.Builder oAuthSecret(String oAuthSecret) {
+            this.oAuthSecret = oAuthSecret;
+            return this;
+        }
+
+        public WebApiClientJwtConfig.Builder oAuthRedirect(String oAuthRedirect) {
+            this.oAuthRedirect = oAuthRedirect;
+            return this;
+        }
+
+        public WebApiClientJwtConfig.Builder serviceUUID(String serviceUUID) {
+            this.serviceUUID = serviceUUID;
+            return this;
+        }
+
+        public WebApiClientJwtConfig.Builder publicKey(String publicKey) {
+            this.publicKey = publicKey;
+            return this;
+        }
     }
 }
