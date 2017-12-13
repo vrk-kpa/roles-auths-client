@@ -106,11 +106,11 @@ public class JwtUtil {
         }
     }
 
-    public List<YpaOrganization> getCompanies(String jwtString, String principalId) throws WebApiClientException {
+    public List<YpaOrganization> getCompanies(String jwtString, String delegateId) throws WebApiClientException {
         try {
             SignedJWT signedJWT = parseAndVerifyToken(jwtString);
             JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
-            if (claimsSet.getStringClaim(JwtUtil.PRINCIPAL).equalsIgnoreCase(principalId) &&
+            if (claimsSet.getStringClaim(JwtUtil.END_USER).equalsIgnoreCase(delegateId) &&
                     claimsSet.getSubject().equalsIgnoreCase(SUBJECT_ORG_ROLES)) {
                 String responseString = claimsSet.getStringClaim(RESPONSE);
                 List<YpaOrganization> orgRoles = objectMapper.readValue(responseString, List.class);
