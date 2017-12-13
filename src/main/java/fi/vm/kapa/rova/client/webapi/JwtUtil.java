@@ -63,9 +63,8 @@ public class JwtUtil {
             JWSVerifier verifier = new RSASSAVerifier(jwtConfig.getRSAPublicKey());
             if (signedJWT.verify(verifier)) {
                 JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
-                if (claimsSet.getAudience().equals((jwtConfig.getServiceUUID())) &&
-                        claimsSet.getIssuer().equalsIgnoreCase(JwtUtil.ISSUER) &&
-                        claimsSet.getAudience().contains(jwtConfig.getServiceUUID())) {
+                if (claimsSet.getAudience().contains(jwtConfig.getServiceUUID()) &&
+                        claimsSet.getIssuer().equalsIgnoreCase(JwtUtil.ISSUER)) {
                     return signedJWT;
                 }
             }
