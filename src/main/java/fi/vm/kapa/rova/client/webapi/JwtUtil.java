@@ -64,7 +64,8 @@ public class JwtUtil {
             if (signedJWT.verify(verifier)) {
                 JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
                 if (claimsSet.getAudience().equals((jwtConfig.getServiceUUID())) &&
-                        claimsSet.getIssuer().equalsIgnoreCase(JwtUtil.ISSUER)) {
+                        claimsSet.getIssuer().equalsIgnoreCase(JwtUtil.ISSUER) &&
+                        claimsSet.getAudience().contains(jwtConfig.getServiceUUID())) {
                     return signedJWT;
                 }
             }

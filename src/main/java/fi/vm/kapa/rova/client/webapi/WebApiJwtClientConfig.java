@@ -82,8 +82,8 @@ public class WebApiJwtClientConfig extends WebApiClientConfig {
             Validate.notBlank(apiKey, "apiKey must be non-blank");
             Validate.notBlank(oAuthSecret, "oAuthSecret must be non-blank");
             Validate.notBlank(oAuthRedirect, "oAuthRedirect must be non-blank");
-            Validate.notBlank(serviceUUID, "oAuthSecret must be non-blank");
-            Validate.notBlank(publicKey, "oAuthRedirect must be non-blank");
+            Validate.notBlank(serviceUUID, "serviceUUID must be non-blank");
+            Validate.notBlank(publicKey, "publicKey must be non-blank");
             return new WebApiJwtClientConfig(clientId, baseUrl, authorizeUrl, tokenUrl, apiKey, oAuthSecret,
                     oAuthRedirect, serviceUUID, publicKey);
         }
