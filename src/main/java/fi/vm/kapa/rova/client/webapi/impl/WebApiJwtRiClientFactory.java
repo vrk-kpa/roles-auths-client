@@ -27,7 +27,7 @@ import fi.vm.kapa.rova.client.webapi.*;
 /**
  * Client factory for REST Api Reference Implementation clients.
  */
-public class WebApiJwtRiClientFactory implements WebApiClientFactory {
+public class WebApiJwtRiClientFactory implements WebApiJwtClientFactory {
 
     private WebApiJwtClientConfig config;
 
@@ -36,12 +36,12 @@ public class WebApiJwtRiClientFactory implements WebApiClientFactory {
     }
 
     @Override
-    public HpaWebApiJwtClient hpaWebApiClient(String delegateId) {
+    public HpaWebApiJwtClient hpaWebApiJwtClient(String delegateId) {
         return new HpaWebApiJwtRiClient(config, delegateId);
     }
 
     @Override
-    public YpaWebApiJwtClient ypaWebApiClient(String delegateId) {
+    public YpaWebApiJwtClient ypaWebApiJwtClient(String delegateId) {
         return new YpaWebApiJwtRiClient(config, delegateId);
     }
 }
