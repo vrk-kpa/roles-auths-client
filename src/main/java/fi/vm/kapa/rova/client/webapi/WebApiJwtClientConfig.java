@@ -39,6 +39,17 @@ public class WebApiJwtClientConfig extends WebApiClientConfig {
 
     private String serviceUUID;
 
+    /**
+     * Non oauth configuration for jwt validation with JWTUtil
+     * @param serviceUUID
+     * @param publicKey
+     */
+    public WebApiJwtClientConfig(String serviceUUID, String publicKey) {
+        this(null, null, null, null, null,
+                null, null, serviceUUID, publicKey);
+    }
+
+
     public WebApiJwtClientConfig(String clientId, URL baseUrl, String authorizeUrl, String tokenUrl, String apiKey,
                                  String oAuthSecret, String oAuthRedirect, String serviceUUID, String publicKey) {
 
