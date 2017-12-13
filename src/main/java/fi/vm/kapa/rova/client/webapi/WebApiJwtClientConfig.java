@@ -63,6 +63,10 @@ public class WebApiJwtClientConfig extends WebApiClientConfig {
         return serviceUUID;
     }
 
+    public static WebApiJwtClientConfig.Builder jwtBuilder() {
+        return new WebApiJwtClientConfig.Builder();
+    }
+
     public static class Builder {
         private String clientId;
         private URL baseUrl;
