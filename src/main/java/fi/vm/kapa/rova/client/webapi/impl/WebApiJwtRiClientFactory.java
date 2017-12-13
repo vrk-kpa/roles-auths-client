@@ -20,12 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client.webapi;
+package fi.vm.kapa.rova.client.webapi.impl;
 
-public interface WebApiClientJwtFactory {
+import fi.vm.kapa.rova.client.webapi.*;
 
-    HpaWebApiJwtClient hpaWebApiJwtClient(String delegateId);
+/**
+ * Client factory for REST Api Reference Implementation clients.
+ */
+public class WebApiJwtRiClientFactory implements WebApiClientFactory {
 
-    YpaWebApiJwtClient ypaWebApiJwtClient(String delegateId);
+    private WebApiJwtClientConfig config;
 
+    public WebApiJwtRiClientFactory(WebApiJwtClientConfig config) {
+        this.config = config;
+    }
+
+    @Override
+    public HpaWebApiJwtClient hpaWebApiClient(String delegateId) {
+        return new HpaWebApiJwtRiClient(config, delegateId);
+    }
+
+    @Override
+    public YpaWebApiJwtClient ypaWebApiClient(String delegateId) {
+        return new YpaWebApiJwtRiClient(config, delegateId);
+    }
 }

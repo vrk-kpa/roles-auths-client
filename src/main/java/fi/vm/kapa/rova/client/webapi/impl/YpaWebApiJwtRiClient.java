@@ -23,10 +23,7 @@
 package fi.vm.kapa.rova.client.webapi.impl;
 
 import fi.vm.kapa.rova.client.model.YpaOrganization;
-import fi.vm.kapa.rova.client.webapi.JwtUtil;
-import fi.vm.kapa.rova.client.webapi.WebApiClientException;
-import fi.vm.kapa.rova.client.webapi.WebApiClientJwtConfig;
-import fi.vm.kapa.rova.client.webapi.YpaWebApiClient;
+import fi.vm.kapa.rova.client.webapi.*;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -40,11 +37,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-public class YpaWebApiJwtRiClient extends AbstractYpaWebApiRiClient implements YpaWebApiClient {
+public class YpaWebApiJwtRiClient extends AbstractYpaWebApiRiClient implements YpaWebApiJwtClient {
 
     JwtUtil jwtUtil;
 
-    public YpaWebApiJwtRiClient(WebApiClientJwtConfig config, String delegateId) {
+    public YpaWebApiJwtRiClient(WebApiJwtClientConfig config, String delegateId) {
         super(config, delegateId);
         this.jwtUtil = new JwtUtil(config);
     }

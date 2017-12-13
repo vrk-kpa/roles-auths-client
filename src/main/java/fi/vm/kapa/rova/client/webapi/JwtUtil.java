@@ -47,11 +47,11 @@ public class JwtUtil {
     public static final String ISSUE = "issue";
     public static final String RESPONSE = "response";
 
-    private WebApiClientJwtConfig jwtConfig;
+    private WebApiJwtClientConfig jwtConfig;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public JwtUtil(WebApiClientJwtConfig jwtConfig) {
+    public JwtUtil(WebApiJwtClientConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
     }
 

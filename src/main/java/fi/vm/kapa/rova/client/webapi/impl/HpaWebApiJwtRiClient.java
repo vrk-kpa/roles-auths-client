@@ -27,7 +27,7 @@ import fi.vm.kapa.rova.client.model.AuthorizationList;
 import fi.vm.kapa.rova.client.webapi.HpaWebApiJwtClient;
 import fi.vm.kapa.rova.client.webapi.JwtUtil;
 import fi.vm.kapa.rova.client.webapi.WebApiClientException;
-import fi.vm.kapa.rova.client.webapi.WebApiClientJwtConfig;
+import fi.vm.kapa.rova.client.webapi.WebApiJwtClientConfig;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
@@ -45,10 +45,10 @@ import java.net.URL;
  */
 public class HpaWebApiJwtRiClient extends AbstractHpaWebApiRiClient implements HpaWebApiJwtClient {
 
-    private WebApiClientJwtConfig jwtConfig;
+    private WebApiJwtClientConfig jwtConfig;
     private JwtUtil jwtUtil;
 
-    public HpaWebApiJwtRiClient(WebApiClientJwtConfig config, String delegateId) {
+    public HpaWebApiJwtRiClient(WebApiJwtClientConfig config, String delegateId) {
         super(config, delegateId);
         this.jwtConfig = config;
         this.jwtUtil = new JwtUtil(jwtConfig);
