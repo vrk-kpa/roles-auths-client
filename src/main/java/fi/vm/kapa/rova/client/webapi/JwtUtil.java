@@ -22,6 +22,7 @@
  */
 package fi.vm.kapa.rova.client.webapi;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
@@ -113,7 +114,7 @@ public class JwtUtil {
             if (claimsSet.getStringClaim(JwtUtil.END_USER).equalsIgnoreCase(delegateId) &&
                     claimsSet.getSubject().equalsIgnoreCase(SUBJECT_ORG_ROLES)) {
                 String responseString = claimsSet.getStringClaim(RESPONSE);
-                List<YpaOrganization> orgRoles = objectMapper.readValue(responseString, List.class);
+                List<YpaOrganization> orgRoles = objectMapper.readValue(responseString, new TypeReference<List<YpaOrganization>>(){});
                 return orgRoles;
             }
             throw new WebApiClientException("OrganizationList token cannot be verified");
