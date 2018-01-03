@@ -22,6 +22,10 @@
  */
 package fi.vm.kapa.rova.client.webapi.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
 import fi.vm.kapa.rova.client.webapi.YpaWebApiClient;
@@ -48,7 +52,12 @@ public abstract class AbstractYpaWebApiRiClient extends AbstractWebApiRiClient i
     }
 
     protected String getRegisterTransferUrl(String transferToken) {
-        return "/service/ypa/user/register/transfer/" + transferToken + "/" + config.getClientId() + "/" + delegateId;
+    	try {
+    		String encodedTransferToken = URLEncoder.encode(transferToken, StandardCharsets.UTF_8.toString());
+    		return "/service/ypa/user/register/transfer/" + encodedTransferToken + "/" + config.getClientId() + "/" + delegateId;
+    	} catch(UnsupportedEncodingException e) {
+    	    throw new AssertionError(e);
+    	}
     }
 
     protected String getRequestPathWithParams(String requestId, String organizationId, boolean jwt) {

@@ -38,7 +38,10 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +67,13 @@ public abstract class AbstractHpaWebApiRiClient extends AbstractWebApiRiClient i
     }
 
     protected String getRegisterTransferUrl(String transferToken) {
-        return "/service/hpa/user/register/transfer/" + transferToken + "/" + config.getClientId() + "/" + delegateId;
+    	
+    	try {
+    		String encodedTransferToken = URLEncoder.encode(transferToken, StandardCharsets.UTF_8.toString());
+    		return "/service/hpa/user/register/transfer/" + encodedTransferToken + "/" + config.getClientId() + "/" + delegateId;
+    	} catch(UnsupportedEncodingException e) {
+    	    throw new AssertionError(e);
+    	}
     }
 
     @Override
