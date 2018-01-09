@@ -22,6 +22,7 @@
  */
 package fi.vm.kapa.rova.client.webapi.impl;
 
+import com.fasterxml.jackson.databind.JavaType;
 import fi.vm.kapa.rova.client.model.YpaOrganization;
 import fi.vm.kapa.rova.client.webapi.*;
 import org.apache.oltu.oauth2.client.OAuthClient;
@@ -35,6 +36,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public class YpaWebApiJwtRiClient extends AbstractYpaWebApiRiClient implements YpaWebApiJwtClient {
@@ -66,6 +68,15 @@ public class YpaWebApiJwtRiClient extends AbstractYpaWebApiRiClient implements Y
         return getRolesTokenResponse(getRequestPathWithParams(requestId, organizationId, true));
     }
 
+    public String getCompaniesSessionToken(String requestId) throws WebApiClientException {
+        return getRolesTokenResponse(getRequestPathWithParams(requestId, null, true));
+    }
+
+    @Override
+    public List<YpaOrganization> getSessionCompanies(String jwtString, String requestId) throws WebApiClientException {
+        return getRolesResponse(getRequestPathWithParams(requestId, null, false));
+    }
+
     public String getRolesTokenResponse(String pathWithParams) throws WebApiClientException {
         String result = null;
         OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
@@ -79,5 +90,22 @@ public class YpaWebApiJwtRiClient extends AbstractYpaWebApiRiClient implements Y
             handleException(e);
         }
         return result;
+    }
+
+    private List<YpaOrganization> getRolesResponse(String pathWithParams) throws WebApiClientException {
+        List<YpaOrganization> result = null;
+        try {
+            String responseString = getRolesTokenResponse(pathWithParams);
+            JavaType resultType = mapper.getTypeFactory().constructParametricType(ArrayList.class, YpaOrganization.class);
+            result = mapper.readValue(responseString, resultType);
+        } catch (IOException e) {
+            handleException(e);
+        }
+        return result;
+    }
+
+    protected String getSessionCompaniesPathWithParams(String jwtString, String requestId) {
+        String base = "/service/ypa/jwt/api/organizationRoles/";
+        return getPathWithParams(base + jwtString, requestId);
     }
 }
