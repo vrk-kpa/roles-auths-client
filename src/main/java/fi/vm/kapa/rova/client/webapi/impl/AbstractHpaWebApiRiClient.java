@@ -67,9 +67,8 @@ public abstract class AbstractHpaWebApiRiClient extends AbstractWebApiRiClient i
     }
 
     protected String getRegisterTransferUrl(String transferToken) {
-    	
     	try {
-    		String encodedTransferToken = URLEncoder.encode(transferToken, StandardCharsets.UTF_8.toString());
+    		String encodedTransferToken = URLEncoder.encode(transferToken, StandardCharsets.ISO_8859_1.toString());
     		return "/service/hpa/user/register/transfer/" + encodedTransferToken + "/" + config.getClientId() + "/" + delegateId;
     	} catch(UnsupportedEncodingException e) {
     	    throw new AssertionError(e);
