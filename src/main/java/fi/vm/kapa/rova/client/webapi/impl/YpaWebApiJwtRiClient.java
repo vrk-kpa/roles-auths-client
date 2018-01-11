@@ -69,7 +69,7 @@ public class YpaWebApiJwtRiClient extends AbstractYpaWebApiRiClient implements Y
     }
 
     public String getCompaniesSessionToken(String requestId) throws WebApiClientException {
-        return getRolesTokenResponse(getRequestPathWithParams(requestId, null, true));
+        return getRolesTokenResponse(getSessionTokenPathWithParams(requestId));
     }
 
     @Override
@@ -106,6 +106,11 @@ public class YpaWebApiJwtRiClient extends AbstractYpaWebApiRiClient implements Y
 
     protected String getSessionCompaniesPathWithParams(String jwtString, String requestId) {
         String base = "/service/ypa/jwt/api/organizationRoles/";
-        return getPathWithParams(base + jwtString, requestId);
+        return getPathWithParams(base + jwtString + "/", requestId);
+    }
+
+    protected String getSessionTokenPathWithParams(String requestId) {
+        String base = "/service/ypa/api/organizationRoles/session/jwt/";
+        return getPathWithParams(base + getOauthSessionId(), requestId);
     }
 }
