@@ -74,7 +74,7 @@ public class YpaWebApiJwtRiClient extends AbstractYpaWebApiRiClient implements Y
 
     @Override
     public List<YpaOrganization> getSessionCompanies(String jwtString, String requestId) throws WebApiClientException {
-        return getRolesResponse(getRequestPathWithParams(requestId, null, false));
+        return getRolesResponse(getSessionCompaniesPathWithParams(jwtString, requestId));
     }
 
     public String getRolesTokenResponse(String pathWithParams) throws WebApiClientException {
