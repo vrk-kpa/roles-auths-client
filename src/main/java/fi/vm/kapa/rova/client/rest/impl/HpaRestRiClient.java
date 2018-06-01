@@ -66,7 +66,7 @@ public class HpaRestRiClient implements HpaRestClient {
     public Authorization getAuthorization(String endUser, String delegateId, String principalId, String requestId, String... issue)
             throws RestClientException {
         HttpClient httpClient = HttpClientBuilder.create().build();
-        String url = restClientConfig.getBaseUrl() + "service/rest/hpa/authorization/"+restClientConfig.getClientId()+"/" + delegateId + "/" + principalId;
+        String url = restClientConfig.getBaseUrl() + "/service/rest/hpa/authorization/"+restClientConfig.getClientId()+"/" + delegateId + "/" + principalId;
         StringBuilder sb = new StringBuilder(url);
         sb.append("?");
 
@@ -88,7 +88,6 @@ public class HpaRestRiClient implements HpaRestClient {
             public Authorization handleResponse(final HttpResponse response)
                     throws ClientProtocolException, IOException {
                 int status = response.getStatusLine().getStatusCode();
-                System.out.println("status: "+ status);
                 HttpEntity entity = response.getEntity();
                 return entity != null ? mapper.readValue(entity.getContent(), Authorization.class) : null;
             }
