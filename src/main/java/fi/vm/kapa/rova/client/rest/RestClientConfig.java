@@ -31,18 +31,15 @@ import java.net.URL;
  */
 public class RestClientConfig {
 
-//    private final String clientId;
+    private final String clientId;
     private final URL baseUrl;
-//    private final String authorizeUrl;
-//    private final String tokenUrl;
     private final String apiKey;
-//    private final String oAuthSecret;
-//    private final String oAuthRedirect;
 
     @SuppressWarnings("unused")
     private RestClientConfig() {
-//        this(null, null, null, null, null, null, null);
-        this(null, null);
+        clientId = null;
+        baseUrl = null;
+        apiKey = null;
     }
 
     /**
@@ -50,111 +47,55 @@ public class RestClientConfig {
      *
      * @param clientId      service clientId
      * @param baseUrl       base URL of service's web front
-     * @param authorizeUrl  URL for OAuth, (rova-web-api/oauth/authorize)
-     * @param tokenUrl      URL for fetching OAuth access token (rova-web-api/oauth/token)
      * @param apiKey        service apiKey
-     * @param oAuthSecret   service oAuthSecret
-     * @param oAuthRedirect URL to redirect to after principal selection
      * @see Builder
      */
-//    public RestClientConfig(String clientId, URL baseUrl, String authorizeUrl, String tokenUrl,
-//            String apiKey, String oAuthSecret, String oAuthRedirect) {
-    public RestClientConfig(URL baseUrl, String apiKey) {
-//        this.clientId = clientId;
+    public RestClientConfig(URL baseUrl, String clientId, String apiKey) {
+        this.clientId = clientId;
         this.baseUrl = baseUrl;
-//        this.authorizeUrl = authorizeUrl;
-//        this.tokenUrl = tokenUrl;
         this.apiKey = apiKey;
-//        this.oAuthSecret = oAuthSecret;
-//        this.oAuthRedirect = oAuthRedirect;
     }
 
-//    public String getClientId() {
-//        return clientId;
-//    }
-//
+    public String getClientId() {
+        return clientId;
+    }
     public URL getBaseUrl() {
         return baseUrl;
     }
-//
-//    public String getAuthorizeUrl() {
-//        return authorizeUrl;
-//    }
-//
-//    public String getTokenUrl() {
-//        return tokenUrl;
-//    }
-//
+
     public String getApiKey() {
         return apiKey;
     }
-//
-//    public String getoAuthSecret() {
-//        return oAuthSecret;
-//    }
-//
-//    public String getoAuthRedirect() {
-//        return oAuthRedirect;
-//    }
 
     public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder {
-//        private String clientId;
+        private String clientId;
         private URL baseUrl;
-//        private String authorizeUrl;
-//        private String tokenUrl;
         private String apiKey;
-//        private String oAuthSecret;
-//        private String oAuthRedirect;
 
         public RestClientConfig build() {
-//            Validate.notBlank(clientId, "clientId must be non-blank");
+            Validate.notBlank(clientId, "clientId must be non-blank");
             Validate.notNull(baseUrl, "baseUrl must be non-null");
-//            Validate.notBlank(authorizeUrl, "authorizeUrl must be non-blank");
-//            Validate.notBlank(tokenUrl, "clientId must be non-blank");
             Validate.notBlank(apiKey, "apiKey must be non-blank");
-//            Validate.notBlank(oAuthSecret, "oAuthSecret must be non-blank");
-//            Validate.notBlank(oAuthRedirect, "oAuthRedirect must be non-blank");
-//            return new RestClientConfig(clientId, baseUrl, authorizeUrl, tokenUrl, apiKey, oAuthSecret, oAuthRedirect);
-            return new RestClientConfig(baseUrl, apiKey);
+            return new RestClientConfig(baseUrl, clientId, apiKey);
         }
 
-//        public Builder clientId(String clientId) {
-//            this.clientId = clientId;
-//            return this;
-//        }
-//
+        public Builder clientId(String clientId) {
+            this.clientId = clientId;
+            return this;
+        }
+
         public Builder baseUrl(URL baseUrl) {
             this.baseUrl = baseUrl;
             return this;
         }
-//
-//        public Builder authorizeUrl(String authorizeUrl) {
-//            this.authorizeUrl = authorizeUrl;
-//            return this;
-//        }
-//
-//        public Builder tokenUrl(String tokenUrl) {
-//            this.tokenUrl = tokenUrl;
-//            return this;
-//        }
 
         public Builder apiKey(String apiKey) {
             this.apiKey = apiKey;
             return this;
         }
-
-//        public Builder oAuthSecret(String oAuthSecret) {
-//            this.oAuthSecret = oAuthSecret;
-//            return this;
-//        }
-//
-//        public Builder oAuthRedirect(String oAuthRedirect) {
-//            this.oAuthRedirect = oAuthRedirect;
-//            return this;
-//        }
     }
 }

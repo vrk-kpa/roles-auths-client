@@ -28,7 +28,6 @@ import fi.vm.kapa.rova.client.model.Authorization;
 import fi.vm.kapa.rova.client.rest.HpaRestClient;
 import fi.vm.kapa.rova.client.rest.RestClientConfig;
 import fi.vm.kapa.rova.client.rest.RestClientException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -36,10 +35,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
-//import org.springframework.beans.factory.annotation.Qualifier;
-//import org.springframework.web.client.RestTemplate;
 import org.apache.http.impl.client.HttpClientBuilder;
-//import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -47,26 +43,21 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
-
 
 public class HpaRestRiClient implements HpaRestClient {
 
     private static final String HMAC_ALGORITHM = "HmacSHA256";
-    public static final String HASH_HEADER_NAME = "X-RoVa-Hash";
-    public static final String TIMESTAMP_HEADER_NAME = "X-RoVa-timestamp";
+    public static final String HASH_HEADER_NAME = "X-AsiointivaltuudetAuthorization";
     public static final String END_USER_HEADER_NAME = "X-userId";
     public static final String END_USER_ID = "RiClientUser";
 
-//    @Value("${web_api_key}")
-//    private String webApiKey = "xNivqZ5m63EQIHq5K82T27YkDZaYZoEf";
     private RestClientConfig restClientConfig;
 
     private ObjectMapper mapper = new ObjectMapper();
-//    @Autowired
-////    @Qualifier("mandateRestTemplate")
-//    private RestTemplate restTemplate;
-
 
     public HpaRestRiClient(RestClientConfig restClientConfig) {
         this.restClientConfig = restClientConfig;
@@ -76,19 +67,21 @@ public class HpaRestRiClient implements HpaRestClient {
     public Authorization getAuthorization(String delegateId, String principalId, String requestId, String... issue)
             throws RestClientException {
         HttpClient httpClient = HttpClientBuilder.create().build();
-        String url = restClientConfig.getBaseUrl().getPath() + "service/rest/hpa/authorization/42bbe569/" + delegateId + "/" + principalId;
+        String url = restClientConfig.getBaseUrl() + "service/rest/hpa/authorization/"+restClientConfig.getClientId()+"/" + delegateId + "/" + principalId;
+        StringBuilder sb = new StringBuilder(url);
+        sb.append("?");
+
         if (issue != null && issue.length > 0) {
-            StringBuilder sb = new StringBuilder(url);
-            sb.append("?");
             for (int i = 0; i < issue.length; i++) {
                 sb.append("issues=");
                 sb.append(issue[i]);
-                if (i < issue.length - 1) {
-                    sb.append("&");
-                }
+                sb.append("&");
+
             }
-            url = sb.toString();
         }
+        sb.append("requestId="+requestId);
+        url = sb.toString();
+
         HttpGet httpGet = new HttpGet(url);
 
         ResponseHandler<Authorization> handler = new ResponseHandler<Authorization>() {
@@ -117,42 +110,27 @@ public class HpaRestRiClient implements HpaRestClient {
     }
 
     private void appendValidationHeaders(HttpGet httpGet) throws IOException {
-        long timestamp = System.currentTimeMillis();
-        String hashData = buildValidationHashData(httpGet, timestamp);
-        String hash = hash(hashData, restClientConfig.getApiKey());
-        httpGet.addHeader(HASH_HEADER_NAME, hash);
-        httpGet.addHeader(TIMESTAMP_HEADER_NAME, ""+timestamp);
+        httpGet.addHeader(HASH_HEADER_NAME, getAuthorizationValue(httpGet.getURI().getPath() + "?" + httpGet.getURI().getRawQuery()));
         httpGet.addHeader(END_USER_HEADER_NAME, END_USER_ID);
     }
 
-    private String buildValidationHashData(HttpGet httpGet, long timestamp) throws JsonProcessingException {
-        StringBuilder data = new StringBuilder();
-        data.append(httpGet.getURI().getPath());
-        String query = httpGet.getURI().getQuery();
-        if (!StringUtils.isBlank(query) ) {
-            data.append("?");
-            data.append(query);
-        }
-        data.append(timestamp);
-        return data.toString();
+    protected String getAuthorizationValue(String path) throws IOException {
+        String timestamp = ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_DATE_TIME);
+        return restClientConfig.getClientId() + " " + timestamp + " " + hash(path + " " + timestamp, restClientConfig.getApiKey());
     }
 
-    private static String hash(String data, String key) throws IOException {
+    @SuppressWarnings("Duplicates")
+    private String hash(String data, String key) throws IOException {
         try {
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
             SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), HMAC_ALGORITHM);
             mac.init(signingKey);
-//            data += ".";
             byte[] rawHmac = mac.doFinal(data.getBytes());
-            return new String(Base64.getEncoder().encode(rawHmac));
+            String result = new String(Base64.getEncoder().encode(rawHmac));
+            return result;
         } catch (NoSuchAlgorithmException | InvalidKeyException | IllegalStateException e) {
             throw new IOException("Cannot create hash", e);
         }
     }
 
-    public static void main(String[] args) throws RestClientException {
-        HpaRestRiClient ri = new HpaRestRiClient(null);
-        Authorization result = ri.getAuthorization("010180-9026", "060999-951B", "requestId", null); // "060999-951B" "120508A950F"
-        System.out.println("result: "+ result);
-    }
 }
