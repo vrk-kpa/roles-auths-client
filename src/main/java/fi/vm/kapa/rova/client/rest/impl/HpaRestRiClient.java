@@ -72,7 +72,7 @@ public class HpaRestRiClient implements HpaRestClient {
 
         if (issue != null && issue.length > 0) {
             for (int i = 0; i < issue.length; i++) {
-                sb.append("issues=");
+                sb.append("issue=");
                 sb.append(issue[i]);
                 sb.append("&");
 
