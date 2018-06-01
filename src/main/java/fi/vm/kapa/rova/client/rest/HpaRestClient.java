@@ -31,6 +31,7 @@ public interface HpaRestClient {
     /**
      * Get authorization for selected parties with optional issues.
      *
+     * @param endUserId End user identification information
      * @param delegateId Personal Identity Code identifying the delegate
      * @param principalId Personal Identity Code identifying the principal
      * @param requestId
@@ -38,6 +39,6 @@ public interface HpaRestClient {
      * @return Authorization
      * @throws RestClientException
      */
-    Authorization getAuthorization(String delegateId, String principalId, String requestId, String... issue)
+    Authorization getAuthorization(String endUserId, String delegateId, String principalId, String requestId, String... issue)
             throws RestClientException;
 }

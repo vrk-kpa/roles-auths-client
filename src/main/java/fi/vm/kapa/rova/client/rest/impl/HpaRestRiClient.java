@@ -53,7 +53,6 @@ public class HpaRestRiClient implements HpaRestClient {
     private static final String HMAC_ALGORITHM = "HmacSHA256";
     public static final String HASH_HEADER_NAME = "X-AsiointivaltuudetAuthorization";
     public static final String END_USER_HEADER_NAME = "X-userId";
-    public static final String END_USER_ID = "RiClientUser";
 
     private RestClientConfig restClientConfig;
 
@@ -64,7 +63,7 @@ public class HpaRestRiClient implements HpaRestClient {
     }
 
     @Override
-    public Authorization getAuthorization(String delegateId, String principalId, String requestId, String... issue)
+    public Authorization getAuthorization(String endUser, String delegateId, String principalId, String requestId, String... issue)
             throws RestClientException {
         HttpClient httpClient = HttpClientBuilder.create().build();
         String url = restClientConfig.getBaseUrl() + "service/rest/hpa/authorization/"+restClientConfig.getClientId()+"/" + delegateId + "/" + principalId;
@@ -97,7 +96,7 @@ public class HpaRestRiClient implements HpaRestClient {
 
         /* SEND AND RETRIEVE RESPONSE */
         try {
-            appendValidationHeaders(httpGet);
+            appendValidationHeaders(httpGet, endUser);
             for (Header h : httpGet.getAllHeaders()) {
                 System.out.println("header "+ h.getName() +" has value "+ h.getValue());
             }
@@ -109,9 +108,9 @@ public class HpaRestRiClient implements HpaRestClient {
 
     }
 
-    private void appendValidationHeaders(HttpGet httpGet) throws IOException {
+    private void appendValidationHeaders(HttpGet httpGet, String endUserId) throws IOException {
         httpGet.addHeader(HASH_HEADER_NAME, getAuthorizationValue(httpGet.getURI().getPath() + "?" + httpGet.getURI().getRawQuery()));
-        httpGet.addHeader(END_USER_HEADER_NAME, END_USER_ID);
+        httpGet.addHeader(END_USER_HEADER_NAME, endUserId);
     }
 
     protected String getAuthorizationValue(String path) throws IOException {
