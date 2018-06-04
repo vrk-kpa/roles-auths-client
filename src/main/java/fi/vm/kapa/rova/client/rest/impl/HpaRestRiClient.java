@@ -96,9 +96,6 @@ public class HpaRestRiClient implements HpaRestClient {
         /* SEND AND RETRIEVE RESPONSE */
         try {
             appendValidationHeaders(httpGet, endUser);
-            for (Header h : httpGet.getAllHeaders()) {
-                System.out.println("header "+ h.getName() +" has value "+ h.getValue());
-            }
             return httpClient.execute(httpGet, handler);
         } catch (IOException e) {
             e.printStackTrace();
