@@ -43,7 +43,7 @@ public class JwtUtil {
     public static final String SUBJECT_ORG_ROLES = "OrganizationalRoles";
     public static final String SUBJECT_AUTHORIZATION = "Authorization";
     public static final String SUBJECT_AUTHORIZATION_LIST = "AuthorizationList";
-    public static final String END_USER = "hetu";
+    public static final String END_USER = "end_user";
     public static final String PRINCIPAL = "principal";
     public static final String ISSUE = "issue";
     public static final String RESPONSE = "response";

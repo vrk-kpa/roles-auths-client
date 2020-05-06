@@ -30,7 +30,7 @@
  <pre>
  {@code
  WebApiClientFactory factory = clientFactoryStore.getHpaFactory(clientId);
- HpaWebApiClient client = factory.hpaWebApiClient(hetu);
+ HpaWebApiClient client = factory.hpaWebApiClient(delegatePersonId);
  String authorizeUrl = client.register("requestId");
  }
  </pre>
