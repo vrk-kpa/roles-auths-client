@@ -20,41 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package fi.vm.kapa.rova.client.xroad.impl;
+package fi.vm.kapa.rova.client.xroad;
 
-import fi.vm.kapa.rova.client.xroad.*;
+import fi.vm.kapa.rova.client.model.PartyIssues;
 
-/**
- * Client factory for JAX-WS Reference Implementation clients.
- * If several XRoad servers are configured into use they will
- * be used as endpoints with round-robin strategy without fail-over.
- */
-public class XRoadRiClientFactory implements XRoadClientFactory {
+import java.util.List;
 
-    private XRoadClientConfig config;
-
-    public XRoadRiClientFactory(XRoadClientConfig config) {
-        this.config = config;
-    }
-
-    @Override
-    public HpaXRoadClient hpaClient() {
-        return new HpaXRoadRiClient(config);
-    }
-
-    @Override
-    public YpaXRoadClient ypaClient() {
-        return new YpaXRoadRiClient(config);
-    }
-
-    @Override
-    public YyaXRoadClient yyaClient() {
-        return new YyaXRoadRiClient(config);
-    }
-
-    @Override
-    public YhaXRoadClient yhaClient() {
-        return new YhaXRoadRiClient(config);
-    }
-
+public interface YhaXRoadClient {
+    /**
+     * Returns issues where delegate company has gotten a mandate from the principal person.
+     *
+     * @param userId        user identifier
+     * @param delegateId    Id of the delegate (y-tunnus, VAT id or national company id)
+     * @param principalIds  List of principal ids (hetu or UID)
+     * @return              List of PartyIssues {@link fi.vm.kapa.rova.client.model.PartyIssues}
+     */
+    List<PartyIssues> getOrganizationalPersonMandates(String userId, String delegateId, List<String> principalIds);
 }

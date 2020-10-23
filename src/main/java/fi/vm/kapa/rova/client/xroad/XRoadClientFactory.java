@@ -29,4 +29,8 @@ public interface XRoadClientFactory {
     HpaXRoadClient hpaClient();
 
     YpaXRoadClient ypaClient();
+    
+    YyaXRoadClient yyaClient();
+
+    YhaXRoadClient yhaClient();
 }
