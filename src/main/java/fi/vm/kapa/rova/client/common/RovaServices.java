@@ -40,6 +40,10 @@ public class RovaServices {
                 new RovaServiceDetails("rovaAuthorizationListService", "/rova/authorizationList"));
         services.put(RovaService.ROLES.name(),
                 new RovaServiceDetails("rovaOrganizationalRolesService", "/rova/OrganizationalRoles"));
+        services.put(RovaService.ORG_MANDATES.name(),
+                new RovaServiceDetails("rovaOrgMandatesService", "/rova/OrganizationalMandates"));
+        services.put(RovaService.ORG_PERSON_MANDATES.name(),
+                new RovaServiceDetails("rovaOrgPersonMandatesService", "/rova/OrganizationalPersonMandates"));
     }
 
     private RovaServices() {
@@ -56,7 +60,9 @@ public class RovaServices {
     public enum RovaService {
         AUTHORIZATION,
         AUTHORIZATION_LIST,
-        ROLES
+        ROLES,
+        ORG_MANDATES,
+        ORG_PERSON_MANDATES
     }
 
 }
