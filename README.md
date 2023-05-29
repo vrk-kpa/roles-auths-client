@@ -2,7 +2,7 @@
 
 A client library for Asiointivaltuudet -services.
 
-Minimum version of Java required is 8.
+Minimum version of Java required is 11.
 
 (Clone,) pull and build roles-auths-wsdl project first.
 
