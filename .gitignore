@@ -6,3 +6,6 @@ roles-auths-client.iml
 .classpath
 .project
 .settings/
+
+#Idea project files
+.idea
