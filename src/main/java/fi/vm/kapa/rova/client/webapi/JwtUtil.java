@@ -1,6 +1,6 @@
 /**
  * The MIT License
- * Copyright (c) 2016 Population Register Centre
+ * Copyright (c) 2022 Digital and Population Data Services Agency
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,10 @@
  */
 package fi.vm.kapa.rova.client.webapi;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
@@ -31,11 +33,15 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import fi.vm.kapa.rova.client.model.Authorization;
 import fi.vm.kapa.rova.client.model.AuthorizationList;
+import fi.vm.kapa.rova.client.model.DecisionReason;
 import fi.vm.kapa.rova.client.model.YpaOrganization;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class JwtUtil {
 
@@ -47,6 +53,7 @@ public class JwtUtil {
     public static final String PRINCIPAL = "principal";
     public static final String ISSUE = "issue";
     public static final String RESPONSE = "response";
+    public static final String REASONS = "reasons";
 
     private WebApiJwtClientConfig jwtConfig;
 
@@ -83,10 +90,20 @@ public class JwtUtil {
                     claimsSet.getSubject().equalsIgnoreCase(SUBJECT_AUTHORIZATION)) {
 
                 String responseString = claimsSet.getStringClaim(RESPONSE);
-                return new Authorization(Authorization.Result.valueOf(responseString));
+                Authorization auth = new Authorization(Authorization.Result.valueOf(responseString));
+
+                String reasonsJson = claimsSet.getStringClaim(REASONS);
+                if (StringUtils.isNotBlank(reasonsJson)) {
+                    Set<DecisionReason> reasons = objectMapper.readValue(reasonsJson, TypeFactory.defaultInstance().constructCollectionType(Set.class, DecisionReason.class));
+                    if (reasons != null && !reasons.isEmpty()) {
+                        auth.getReasons().addAll(reasons);
+                    }
+                }
+
+                return auth;
             }
             throw new WebApiClientException("Authorization token cannot be verified");
-        } catch (ParseException e) {
+        } catch (ParseException | JsonProcessingException e) {
             throw new WebApiClientException(e.getMessage());
         }
     }
@@ -99,7 +116,17 @@ public class JwtUtil {
                     claimsSet.getSubject().equalsIgnoreCase(SUBJECT_AUTHORIZATION_LIST)) {
                 String responseString = claimsSet.getStringClaim(RESPONSE);
                 List<String> roles = objectMapper.readValue(responseString, List.class);
-                return new AuthorizationList(roles);
+                AuthorizationList authoriationList = new AuthorizationList(roles);
+
+                String reasonsJson = claimsSet.getStringClaim(REASONS);
+                if (StringUtils.isNotBlank(reasonsJson)) {
+                    Set<DecisionReason> reasons = objectMapper.readValue(reasonsJson, TypeFactory.defaultInstance().constructCollectionType(Set.class, DecisionReason.class));
+                    if (reasons != null && !reasons.isEmpty()) {
+                        authoriationList.getReasons().addAll(reasons);
+                    }
+                }
+
+                return authoriationList;
             }
             throw new WebApiClientException("Authorization token cannot be verified");
         } catch (ParseException | IOException e) {
