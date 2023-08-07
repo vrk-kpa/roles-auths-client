@@ -116,17 +116,17 @@ public class JwtUtil {
                     claimsSet.getSubject().equalsIgnoreCase(SUBJECT_AUTHORIZATION_LIST)) {
                 String responseString = claimsSet.getStringClaim(RESPONSE);
                 List<String> roles = objectMapper.readValue(responseString, List.class);
-                AuthorizationList authoriationList = new AuthorizationList(roles);
+                AuthorizationList authorizationList = new AuthorizationList(roles);
 
                 String reasonsJson = claimsSet.getStringClaim(REASONS);
                 if (StringUtils.isNotBlank(reasonsJson)) {
                     Set<DecisionReason> reasons = objectMapper.readValue(reasonsJson, TypeFactory.defaultInstance().constructCollectionType(Set.class, DecisionReason.class));
                     if (reasons != null && !reasons.isEmpty()) {
-                        authoriationList.getReasons().addAll(reasons);
+                        authorizationList.getReasons().addAll(reasons);
                     }
                 }
 
-                return authoriationList;
+                return authorizationList;
             }
             throw new WebApiClientException("Authorization token cannot be verified");
         } catch (ParseException | IOException e) {
