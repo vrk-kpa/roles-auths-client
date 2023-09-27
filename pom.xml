@@ -31,7 +31,7 @@
     <name>roles-auths-client</name>
     <packaging>jar</packaging>
 
-    <url>http://www.vrk.fi</url>
+    <url>https://dvv.fi</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -52,13 +52,13 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.4</version>
+            <version>3.13.0</version>
         </dependency>
         <!-- http client -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
+            <version>4.5.14</version>
         </dependency>
         <!-- ws api -->
         <dependency>
@@ -71,13 +71,13 @@
         <dependency>
             <groupId>org.apache.oltu.oauth2</groupId>
             <artifactId>org.apache.oltu.oauth2.client</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.2</version>
         </dependency>
         <!-- JWT -->
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
-            <version>9.13</version>
+            <version>9.35</version>
         </dependency>
 
         <!-- test deps -->
@@ -90,14 +90,14 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>3.3.1</version>
+            <version>5.2.0</version>
             <scope>test</scope>
         </dependency>
         <!-- logging deps -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.21</version>
+            <version>1.7.36</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -286,11 +286,4 @@
         </plugins>
     </build>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>vrk-ci</id>
-            <name>vrk-ci-snapshots</name>
-            <url>https://ci.kapa.ware.fi/artifactory/jenkins-snapshot-local</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>
