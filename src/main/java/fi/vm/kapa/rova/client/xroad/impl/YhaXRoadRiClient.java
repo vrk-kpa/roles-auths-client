@@ -30,10 +30,10 @@ import fi.vm.kapa.xml.rova.api.orgpersonmandates.*;
 import fi.vm.kapa.xml.rova.api.orgpersonmandates.RovaOrgPersonMandatesPortType;
 import fi.vm.kapa.xml.rova.api.orgpersonmandates.RovaOrgPersonMandatesService_Service;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
-import javax.xml.ws.handler.HandlerResolver;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.handler.HandlerResolver;
 import java.util.ArrayList;
 import java.util.List;
 

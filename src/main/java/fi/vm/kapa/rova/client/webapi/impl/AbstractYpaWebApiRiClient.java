@@ -52,12 +52,7 @@ public abstract class AbstractYpaWebApiRiClient extends AbstractWebApiRiClient i
     }
 
     protected String getRegisterTransferUrl(String transferToken) {
-//    	try {
-    		//String encodedTransferToken = URLEncoder.encode(transferToken, StandardCharsets.ISO_8859_1.toString());
-    		return "/service/ypa/user/register/transfer/" + transferToken + "/" + config.getClientId() + "/" + delegateId;
-//    	} catch(UnsupportedEncodingException e) {
-//    	    throw new AssertionError(e);
-//    	}
+        return "/service/ypa/user/register/transfer/" + transferToken + "/" + config.getClientId() + "/" + delegateId;
     }
 
     protected String getRequestPathWithParams(String requestId, String organizationId, boolean jwt) {

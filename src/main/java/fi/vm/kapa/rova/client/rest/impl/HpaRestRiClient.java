@@ -22,25 +22,24 @@
  */
 package fi.vm.kapa.rova.client.rest.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.kapa.rova.client.model.Authorization;
 import fi.vm.kapa.rova.client.rest.HpaRestClient;
 import fi.vm.kapa.rova.client.rest.RestClientConfig;
 import fi.vm.kapa.rova.client.rest.RestClientException;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.ZoneOffset;
@@ -66,46 +65,41 @@ public class HpaRestRiClient implements HpaRestClient {
     public Authorization getAuthorization(String endUser, String delegateId, String principalId, String requestId, String... issue)
             throws RestClientException {
         HttpClient httpClient = HttpClientBuilder.create().build();
-        String url = restClientConfig.getBaseUrl() + "/service/rest/hpa/authorization/"+restClientConfig.getClientId()+"/" + delegateId + "/" + principalId;
+        String url = restClientConfig.getBaseUrl() + "/service/rest/hpa/authorization/"+restClientConfig.getClientId()
+                + "/" + delegateId + "/" + principalId;
         StringBuilder sb = new StringBuilder(url);
         sb.append("?");
 
-        if (issue != null && issue.length > 0) {
-            for (int i = 0; i < issue.length; i++) {
+        if (issue != null) {
+            for (String s : issue) {
                 sb.append("issue=");
-                sb.append(issue[i]);
+                sb.append(s);
                 sb.append("&");
-
             }
         }
-        sb.append("requestId="+requestId);
+        sb.append("requestId=").append(requestId);
         url = sb.toString();
 
         HttpGet httpGet = new HttpGet(url);
 
-        ResponseHandler<Authorization> handler = new ResponseHandler<Authorization>() {
-            @Override
-            public Authorization handleResponse(final HttpResponse response)
-                    throws ClientProtocolException, IOException {
-                int status = response.getStatusLine().getStatusCode();
-                HttpEntity entity = response.getEntity();
-                return entity != null ? mapper.readValue(entity.getContent(), Authorization.class) : null;
-            }
+        HttpClientResponseHandler<Authorization> handler = response -> {
+            HttpEntity entity = response.getEntity();
+            return entity != null ? mapper.readValue(entity.getContent(), Authorization.class) : null;
         };
 
         /* SEND AND RETRIEVE RESPONSE */
         try {
             appendValidationHeaders(httpGet, endUser);
-            return httpClient.execute(httpGet, handler);
-        } catch (IOException e) {
+            return httpClient.execute(httpGet, null, handler);
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
             return null;
         }
 
     }
 
-    private void appendValidationHeaders(HttpGet httpGet, String endUserId) throws IOException {
-        httpGet.addHeader(HASH_HEADER_NAME, getAuthorizationValue(httpGet.getURI().getPath() + "?" + httpGet.getURI().getRawQuery()));
+    private void appendValidationHeaders(HttpGet httpGet, String endUserId) throws IOException, URISyntaxException {
+        httpGet.addHeader(HASH_HEADER_NAME, getAuthorizationValue(httpGet.getUri().getPath() + "?" + httpGet.getUri().getRawQuery()));
         httpGet.addHeader(END_USER_HEADER_NAME, endUserId);
     }
 
@@ -121,8 +115,7 @@ public class HpaRestRiClient implements HpaRestClient {
             SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), HMAC_ALGORITHM);
             mac.init(signingKey);
             byte[] rawHmac = mac.doFinal(data.getBytes());
-            String result = new String(Base64.getEncoder().encode(rawHmac));
-            return result;
+            return new String(Base64.getEncoder().encode(rawHmac));
         } catch (NoSuchAlgorithmException | InvalidKeyException | IllegalStateException e) {
             throw new IOException("Cannot create hash", e);
         }

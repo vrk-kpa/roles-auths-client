@@ -28,10 +28,10 @@ import fi.vm.kapa.rova.client.xroad.XRoadClientConfig;
 import fi.vm.kapa.rova.client.xroad.YpaXRoadClient;
 import fi.vm.kapa.xml.rova.api.orgroles.*;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
-import javax.xml.ws.handler.HandlerResolver;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.handler.HandlerResolver;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -56,16 +56,15 @@
         </dependency>
         <!-- http client -->
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.14</version>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.2.1</version>
         </dependency>
         <!-- ws api -->
         <dependency>
-            <groupId>com.sun.xml.ws</groupId>
-            <artifactId>jaxws-rt</artifactId>
-            <version>2.3.6</version>
-            <scope>compile</scope>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
+            <version>4.0.1</version>
         </dependency>
         <!-- oauth for rest api -->
         <dependency>
@@ -112,16 +111,28 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.11.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <release>11</release>
+                    <compilerArgs>
+                        <arg>-Xlint:all,-options,-path,-processing</arg>
+                    </compilerArgs>
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-maven-plugin</artifactId>
-                <version>2.6</version>
+                <version>4.0.2</version>
+                <configuration>
+                    <sourceDestDir>${sourcesDir}</sourceDestDir>
+                    <destDir>${classesDir}</destDir>
+                    <extension>true</extension>
+                    <vmArgs>
+                        <vmArg>-Djavax.xml.accessExternalDTD=all</vmArg>
+                        <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
+                    </vmArgs>
+                </configuration>
                 <executions>
                     <execution>
                         <id>delegate</id>
@@ -130,16 +141,9 @@
                             <goal>wsimport</goal>
                         </goals>
                         <configuration>
-                            <packageName>fi.vm.kapa.xml.rova.api.delegate</packageName>
+                            <wsdlFiles>wsdl/delegate.wsdl</wsdlFiles>
                             <wsdlLocation>/wsdl/delegate.wsdl</wsdlLocation>
-                            <wsdlFiles>
-                                <wsdlFile>wsdl/delegate.wsdl</wsdlFile>
-                            </wsdlFiles>
-                            <verbose>true</verbose>
-                            <vmArgs>
-                                <vmArg>-Djavax.xml.accessExternalDTD=all</vmArg>
-                                <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
-                            </vmArgs>
+                            <packageName>fi.vm.kapa.xml.rova.api.delegate</packageName>
                         </configuration>
                     </execution>
                     <execution>
@@ -149,16 +153,9 @@
                             <goal>wsimport</goal>
                         </goals>
                         <configuration>
-                            <packageName>fi.vm.kapa.xml.rova.api.authorization</packageName>
+                            <wsdlFiles>wsdl/authorization.wsdl</wsdlFiles>
                             <wsdlLocation>/wsdl/authorization.wsdl</wsdlLocation>
-                            <wsdlFiles>
-                                <wsdlFile>wsdl/authorization.wsdl</wsdlFile>
-                            </wsdlFiles>
-                            <verbose>true</verbose>
-                            <vmArgs>
-                                <vmArg>-Djavax.xml.accessExternalDTD=all</vmArg>
-                                <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
-                            </vmArgs>
+                            <packageName>fi.vm.kapa.xml.rova.api.authorization</packageName>
                         </configuration>
                     </execution>
                     <execution>
@@ -168,16 +165,9 @@
                             <goal>wsimport</goal>
                         </goals>
                         <configuration>
-                            <packageName>fi.vm.kapa.xml.rova.api.authorization.list</packageName>
+                            <wsdlFiles>wsdl/authorizationList.wsdl</wsdlFiles>
                             <wsdlLocation>/wsdl/authorizationList.wsdl</wsdlLocation>
-                            <wsdlFiles>
-                                <wsdlFile>wsdl/authorizationList.wsdl</wsdlFile>
-                            </wsdlFiles>
-                            <verbose>true</verbose>
-                            <vmArgs>
-                                <vmArg>-Djavax.xml.accessExternalDTD=all</vmArg>
-                                <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
-                            </vmArgs>
+                            <packageName>fi.vm.kapa.xml.rova.api.authorization.list</packageName>
                         </configuration>
                     </execution>
                     <execution>
@@ -187,54 +177,33 @@
                             <goal>wsimport</goal>
                         </goals>
                         <configuration>
-                            <packageName>fi.vm.kapa.xml.rova.api.orgroles</packageName>
+                            <wsdlFiles>wsdl/orgroles.wsdl</wsdlFiles>
                             <wsdlLocation>/wsdl/orgroles.wsdl</wsdlLocation>
-                            <wsdlFiles>
-                                <wsdlFile>wsdl/orgroles.wsdl</wsdlFile>
-                            </wsdlFiles>
-                            <verbose>true</verbose>
-                            <vmArgs>
-                                <vmArg>-Djavax.xml.accessExternalDTD=all</vmArg>
-                                <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
-                            </vmArgs>
+                            <packageName>fi.vm.kapa.xml.rova.api.orgroles</packageName>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>principalorganizationissues</id>
+                        <id>orgmandates</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>wsimport</goal>
                         </goals>
                         <configuration>
-                            <packageName>fi.vm.kapa.xml.rova.api.orgmandates</packageName>
+                            <wsdlFiles>wsdl/orgmandates.wsdl</wsdlFiles>
                             <wsdlLocation>/wsdl/orgmandates.wsdl</wsdlLocation>
-                            <wsdlFiles>
-                                <wsdlFile>wsdl/orgmandates.wsdl</wsdlFile>
-                            </wsdlFiles>
-                            <verbose>true</verbose>
-                            <vmArgs>
-                                <vmArg>-Djavax.xml.accessExternalDTD=all</vmArg>
-                                <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
-                            </vmArgs>
+                            <packageName>fi.vm.kapa.xml.rova.api.orgmandates</packageName>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>principalpersonissues</id>
+                        <id>orgpersonmandates</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>wsimport</goal>
                         </goals>
                         <configuration>
-                            <packageName>fi.vm.kapa.xml.rova.api.orgpersonmandates</packageName>
+                            <wsdlFiles>wsdl/orgpersonmandates.wsdl</wsdlFiles>
                             <wsdlLocation>/wsdl/orgpersonmandates.wsdl</wsdlLocation>
-                            <wsdlFiles>
-                                <wsdlFile>wsdl/orgpersonmandates.wsdl</wsdlFile>
-                            </wsdlFiles>
-                            <verbose>true</verbose>
-                            <vmArgs>
-                                <vmArg>-Djavax.xml.accessExternalDTD=all</vmArg>
-                                <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
-                            </vmArgs>
+                            <packageName>fi.vm.kapa.xml.rova.api.orgpersonmandates</packageName>
                         </configuration>
                     </execution>
                 </executions>

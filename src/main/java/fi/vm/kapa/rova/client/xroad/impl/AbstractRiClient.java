@@ -27,9 +27,9 @@ import fi.vm.kapa.rova.client.common.RovaServiceDetails;
 import fi.vm.kapa.rova.client.xroad.HeaderHandler;
 import fi.vm.kapa.rova.client.xroad.XRoadClientConfig;
 
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.HandlerResolver;
-import javax.xml.ws.handler.PortInfo;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.HandlerResolver;
+import jakarta.xml.ws.handler.PortInfo;
 import java.util.ArrayList;
 import java.util.List;
 

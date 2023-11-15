@@ -25,10 +25,10 @@ package fi.vm.kapa.rova.client.xroad.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
-import javax.xml.ws.handler.HandlerResolver;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.handler.HandlerResolver;
 
 import fi.vm.kapa.rova.client.common.*;
 import fi.vm.kapa.rova.client.model.PartyIssues;
