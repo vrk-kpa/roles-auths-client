@@ -5,9 +5,9 @@
   </HEAD>
   <BODY>
 
-<H3>roles-auths-client library usage example</H3>
+<H1>roles-auths-client library usage example</H1>
 
-Please notice that Java 8 or higher is required.
+Please notice that Java 11 or higher is required.
 
 <HR/>
 
@@ -18,7 +18,7 @@ Please notice that Java 8 or higher is required.
     XRoadClientConfig config = new XRoadClientConfig(
         new ClientHeaderDetails(props),
         new ServiceHeaderDetails(props),
-        new HashSet<>(Arrays.asList(new XRoadServer[] {
+        new HashSet&lt;&gt;(Arrays.asList(new XRoadServer[] {
                 new XRoadServer((String) props.get("xroad_host1")),
                 new XRoadServer((String) props.get("xroad_host2"))
         })));
