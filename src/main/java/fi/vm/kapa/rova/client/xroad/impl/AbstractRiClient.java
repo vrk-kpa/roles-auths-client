@@ -8,6 +8,7 @@ import fi.vm.kapa.rova.client.xroad.XRoadClientConfig;
 import jakarta.xml.ws.handler.Handler;
 import jakarta.xml.ws.handler.HandlerResolver;
 import jakarta.xml.ws.handler.PortInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 

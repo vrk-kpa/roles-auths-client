@@ -3,21 +3,14 @@ package fi.vm.kapa.rova.client.webapi.impl;
 import com.fasterxml.jackson.databind.JavaType;
 import fi.vm.kapa.rova.client.model.YpaOrganization;
 import fi.vm.kapa.rova.client.webapi.*;
-import org.apache.oltu.oauth2.client.OAuthClient;
-import org.apache.oltu.oauth2.client.URLConnectionClient;
-import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
-import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
-import org.apache.oltu.oauth2.client.response.OAuthResourceResponse;
-import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class YpaWebApiJwtRiClient extends AbstractYpaWebApiRiClient implements YpaWebApiJwtClient {
+
+    private static final long serialVersionUID = 8988149210867218601L;
 
     JwtUtil jwtUtil;
 
@@ -56,18 +49,13 @@ public class YpaWebApiJwtRiClient extends AbstractYpaWebApiRiClient implements Y
     }
 
     public String getRolesTokenResponse(String pathWithParams) throws WebApiClientException {
-        String result = null;
-        OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
         try {
-            OAuthClientRequest bearerClientRequest = new OAuthBearerClientRequest(new URL(config.getBaseUrl(), pathWithParams).toString()).setAccessToken(accessToken).buildQueryMessage();
-            bearerClientRequest.setHeader("X-AsiointivaltuudetAuthorization", getAuthorizationValue(bearerClientRequest.getLocationUri().substring(config.getBaseUrl().toString().length())));
-
-            OAuthResourceResponse resourceResponse = oAuthClient.resource(bearerClientRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-            result = resourceResponse.getBody();
-        } catch (IOException | OAuthProblemException | OAuthSystemException e) {
+            return getResultString(config.getBaseUrl(), pathWithParams, accessToken);
+        } catch (IOException e) {
             handleException(e);
         }
-        return result;
+        // should not get here
+        return null;
     }
 
     private List<YpaOrganization> getRolesResponse(String pathWithParams) throws WebApiClientException {

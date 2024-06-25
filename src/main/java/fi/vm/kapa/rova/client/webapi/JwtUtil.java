@@ -93,7 +93,7 @@ public class JwtUtil {
             if (claimsSet.getStringClaim(JwtUtil.PRINCIPAL).equalsIgnoreCase(principalId) &&
                     claimsSet.getSubject().equalsIgnoreCase(SUBJECT_AUTHORIZATION_LIST)) {
                 String responseString = claimsSet.getStringClaim(RESPONSE);
-                List<String> roles = objectMapper.readValue(responseString, List.class);
+                List<String> roles = objectMapper.readValue(responseString, new TypeReference<>() {});
                 AuthorizationList authorizationList = new AuthorizationList(roles);
 
                 String reasonsJson = claimsSet.getStringClaim(REASONS);
@@ -119,8 +119,8 @@ public class JwtUtil {
             if (claimsSet.getStringClaim(JwtUtil.END_USER).equalsIgnoreCase(delegateId) &&
                     claimsSet.getSubject().equalsIgnoreCase(SUBJECT_ORG_ROLES)) {
                 String responseString = claimsSet.getStringClaim(RESPONSE);
-                List<YpaOrganization> orgRoles = objectMapper.readValue(responseString, new TypeReference<List<YpaOrganization>>(){});
-                return orgRoles;
+                return objectMapper.readValue(responseString, new TypeReference<>() {
+                });
             }
             throw new WebApiClientException("OrganizationList token cannot be verified");
         } catch (ParseException | IOException e) {

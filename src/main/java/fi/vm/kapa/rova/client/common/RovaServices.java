@@ -11,7 +11,7 @@ public class RovaServices {
     private static Map<String, RovaServiceDetails> services = null;
 
     static {
-        services = new HashMap();
+        services = new HashMap<>();
         services.put(RovaService.AUTHORIZATION.name(),
                 new RovaServiceDetails("rovaAuthorizationService", "/rova/authorization"));
         services.put(RovaService.AUTHORIZATION_LIST.name(),

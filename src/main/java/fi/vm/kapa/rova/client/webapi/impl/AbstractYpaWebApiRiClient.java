@@ -1,17 +1,16 @@
 package fi.vm.kapa.rova.client.webapi.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
 import fi.vm.kapa.rova.client.webapi.YpaWebApiClient;
 
 public abstract class AbstractYpaWebApiRiClient extends AbstractWebApiRiClient implements YpaWebApiClient {
+
+    private static final long serialVersionUID = -7951396876583941944L;
+
     protected ObjectMapper mapper = new ObjectMapper();
 
-    public AbstractYpaWebApiRiClient(WebApiClientConfig config, String delegateId) {
+    protected AbstractYpaWebApiRiClient(WebApiClientConfig config, String delegateId) {
         super(config, delegateId);
     }
 

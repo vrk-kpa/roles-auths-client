@@ -5,12 +5,10 @@ import fi.vm.kapa.rova.client.model.Authorization;
 import fi.vm.kapa.rova.client.rest.HpaRestClient;
 import fi.vm.kapa.rova.client.rest.RestClientConfig;
 import fi.vm.kapa.rova.client.rest.RestClientException;
-import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 
 import javax.crypto.Mac;
@@ -31,9 +29,9 @@ public class HpaRestRiClient implements HpaRestClient {
     public static final String HASH_HEADER_NAME = "X-AsiointivaltuudetAuthorization";
     public static final String END_USER_HEADER_NAME = "X-userId";
 
-    private RestClientConfig restClientConfig;
+    private final RestClientConfig restClientConfig;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public HpaRestRiClient(RestClientConfig restClientConfig) {
         this.restClientConfig = restClientConfig;
@@ -42,7 +40,6 @@ public class HpaRestRiClient implements HpaRestClient {
     @Override
     public Authorization getAuthorization(String endUser, String delegateId, String principalId, String requestId, String... issue)
             throws RestClientException {
-        HttpClient httpClient = HttpClientBuilder.create().build();
         String url = restClientConfig.getBaseUrl() + "/service/rest/hpa/authorization/"+restClientConfig.getClientId()
                 + "/" + delegateId + "/" + principalId;
         StringBuilder sb = new StringBuilder(url);
@@ -65,15 +62,12 @@ public class HpaRestRiClient implements HpaRestClient {
             return entity != null ? mapper.readValue(entity.getContent(), Authorization.class) : null;
         };
 
-        /* SEND AND RETRIEVE RESPONSE */
-        try {
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             appendValidationHeaders(httpGet, endUser);
             return httpClient.execute(httpGet, null, handler);
         } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();
-            return null;
+            throw new RestClientException(e.getMessage(), e);
         }
-
     }
 
     private void appendValidationHeaders(HttpGet httpGet, String endUserId) throws IOException, URISyntaxException {

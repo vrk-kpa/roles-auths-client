@@ -1,23 +1,22 @@
 package fi.vm.kapa.rova.client.webapi.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.oauth2.sdk.*;
+import com.nimbusds.oauth2.sdk.auth.ClientAuthentication;
+import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic;
+import com.nimbusds.oauth2.sdk.auth.Secret;
+import com.nimbusds.oauth2.sdk.id.ClientID;
+import com.nimbusds.oauth2.sdk.token.AccessToken;
 import fi.vm.kapa.rova.client.webapi.WebApiClientConfig;
 import fi.vm.kapa.rova.client.webapi.WebApiClientException;
-import org.apache.oltu.oauth2.client.OAuthClient;
-import org.apache.oltu.oauth2.client.URLConnectionClient;
-import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
-import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.ZoneOffset;
@@ -26,17 +25,20 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.UUID;
 
+import static fi.vm.kapa.rova.client.webapi.WebApiClient.ASIOINTIVALTUUDET_AUTHORIZATION_HEADER;
+import static fi.vm.kapa.rova.client.webapi.WebApiClient.AUTHORIZATION_HEADER;
+
 public abstract class AbstractWebApiRiClient {
 
-    protected final static String HMAC_ALGORITHM = "HmacSHA256";
+    protected static final String HMAC_ALGORITHM = "HmacSHA256";
     protected final WebApiClientConfig config;
     protected final String delegateId;
 
     private RegisterToken registerToken;
 
-    protected String accessToken;
+    protected AccessToken accessToken;
 
-    private String stateParameter = UUID.randomUUID().toString();
+    private final String stateParameter = UUID.randomUUID().toString();
 
     private static class RegisterToken {
         String sessionId;
@@ -53,9 +55,7 @@ public abstract class AbstractWebApiRiClient {
         }
     }
 
-    private boolean clientActiveState;
-
-    public AbstractWebApiRiClient(WebApiClientConfig config, String delegateId) {
+    protected AbstractWebApiRiClient(WebApiClientConfig config, String delegateId) {
         this.config = config;
         this.delegateId = delegateId;
     }
@@ -70,20 +70,28 @@ public abstract class AbstractWebApiRiClient {
 
     public void getToken(String codeParam, String stateParam) throws WebApiClientException {
         if (!stateParameter.equals(stateParam)) {
-            clientActiveState = false;
             throw new WebApiClientException("Mismatching OAuth state parameter. Expected state=" + stateParameter);
         }
 
-        OAuthJSONAccessTokenResponse oAuthResponse = null;
         try {
-            OAuthClientRequest.TokenRequestBuilder requestBuilder = OAuthClientRequest.tokenLocation(config.getTokenUrl()).setGrantType(GrantType.AUTHORIZATION_CODE).setClientId(config.getClientId()).setClientSecret(config.getoAuthSecret()).setCode(codeParam);
-
-            OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-            oAuthResponse = oAuthClient.accessToken(requestBuilder.setRedirectURI(config.getoAuthRedirect()).buildBodyMessage(), OAuthJSONAccessTokenResponse.class);
-        } catch (OAuthProblemException | OAuthSystemException e) {
+            AuthorizationCode code = new AuthorizationCode(codeParam);
+            URI callback = new URI(config.getoAuthRedirect());
+            AuthorizationGrant codeGrant = new AuthorizationCodeGrant(code, callback);
+            ClientID clientID = new ClientID(config.getClientId());
+            Secret clientSecret = new Secret(config.getoAuthSecret());
+            ClientAuthentication clientAuth = new ClientSecretBasic(clientID, clientSecret);
+            URI tokenEndpoint = new URI(config.getTokenUrl());
+            TokenRequest request = new TokenRequest(tokenEndpoint, clientAuth, codeGrant);
+            TokenResponse response = TokenResponse.parse(request.toHTTPRequest().send());
+            if (!response.indicatesSuccess()) {
+                TokenErrorResponse errorResponse = response.toErrorResponse();
+                throw new IOException(errorResponse.getErrorObject().toString());
+            }
+            AccessTokenResponse successResponse = response.toSuccessResponse();
+            accessToken = successResponse.getTokens().getAccessToken();
+        } catch (URISyntaxException | ParseException | IOException e) {
             handleException("Unable to get token", e);
         }
-        this.accessToken = oAuthResponse.getAccessToken();
     }
 
     public String getTransferToken() throws WebApiClientException {
@@ -109,7 +117,6 @@ public abstract class AbstractWebApiRiClient {
 
     private String actuallyRegister(String path, String requestId, String userInterfaceLanguage) throws WebApiClientException {
         try {
-            clientActiveState = true;
             String tokenStr = getResultString(getPathWithParams(path, requestId));
             ObjectMapper mapper = new ObjectMapper();
             this.registerToken = mapper.readValue(tokenStr, RegisterToken.class);
@@ -119,6 +126,7 @@ public abstract class AbstractWebApiRiClient {
                     + "&response_type=code"//
                     + "&requestId=" + requestId//
                     + "&user=" + this.registerToken.userId //
+                    + "&scope=read"
                     + "&state=" + stateParameter //
                     + "&redirect_uri=" + config.getoAuthRedirect() //
                     + (userInterfaceLanguage != null ? "&lang=" + userInterfaceLanguage : "");
@@ -130,16 +138,15 @@ public abstract class AbstractWebApiRiClient {
     }
 
     public Boolean unregister() throws WebApiClientException {
-        clientActiveState = false;
         try {
             String sessionId = this.registerToken.sessionId;
             if (sessionId == null) {
                 return false;
             }
             String resultString = getResultString(getUnRegisterUrl(sessionId));
-            return (resultString != null && "true".equalsIgnoreCase(resultString));
+            return ("true".equalsIgnoreCase(resultString));
         } catch (IOException e) {
-            handleException("Unregisterig failed", e);
+            handleException("Unregistration failed", e);
         }
         return false;
     }
@@ -160,8 +167,7 @@ public abstract class AbstractWebApiRiClient {
             SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), HMAC_ALGORITHM);
             mac.init(signingKey);
             byte[] rawHmac = mac.doFinal(data.getBytes());
-            String result = new String(Base64.getEncoder().encode(rawHmac));
-            return result;
+            return new String(Base64.getEncoder().encode(rawHmac));
         } catch (NoSuchAlgorithmException | InvalidKeyException | IllegalStateException e) {
             throw new IOException("Cannot create hash", e);
         }
@@ -174,32 +180,44 @@ public abstract class AbstractWebApiRiClient {
                 pathBuilder.append("&issues=").append(issue);
             }
         }
-
         return pathBuilder.toString();
     }
 
     protected void handleException(Throwable t) throws WebApiClientException {
-        clientActiveState = false;
         throw new WebApiClientException("Got exception client now in inactive state", t);
     }
 
     protected void handleException(String msg, Throwable t) throws WebApiClientException {
-        clientActiveState = false;
         throw new WebApiClientException(msg, t);
+    }
+
+    protected String readResultString(InputStream inputStream) throws IOException {
+        StringBuilder resultString = new StringBuilder();
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = in.readLine()) != null) {
+                resultString.append(line);
+            }
+        }
+        return resultString.toString();
+    }
+
+    protected String getResultString(URL baseUrl, String path, AccessToken accessToken) throws IOException {
+        URLConnection conn = new URL(baseUrl + path).openConnection();
+        conn.setRequestProperty(AUTHORIZATION_HEADER, accessToken.toAuthorizationHeader());
+        conn.setRequestProperty(ASIOINTIVALTUUDET_AUTHORIZATION_HEADER, getAuthorizationValue(path));
+        try (InputStream is = conn.getInputStream()) {
+            return readResultString(is);
+        }
     }
 
     private String getResultString(String path) throws IOException {
         URL url = new URL(config.getBaseUrl(), path);
         HttpURLConnection yc = (HttpURLConnection) url.openConnection();
-        yc.setRequestProperty("X-AsiointivaltuudetAuthorization", getAuthorizationValue(path));
-        String resultString = null;
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()))) {
-            String s;
-            while ((s = in.readLine()) != null) {
-                resultString = s;
-            }
+        yc.setRequestProperty(ASIOINTIVALTUUDET_AUTHORIZATION_HEADER, getAuthorizationValue(path));
+        try (InputStream is = yc.getInputStream()) {
+            return readResultString(is);
         }
-        return resultString;
     }
 
     public String getDelegateId() {
