@@ -6,6 +6,10 @@ import java.io.Serializable;
  * Shared parent methods for HpaWebApiClient and YpaWebClient.
  */
 public interface WebApiClient extends Serializable {
+
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String ASIOINTIVALTUUDET_AUTHORIZATION_HEADER = "X-AsiointivaltuudetAuthorization";
+
     //Initiates a session with webApi. Stores OAuth userid and sessionid for later requests.
 
     /**

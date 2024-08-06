@@ -16,6 +16,7 @@ import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.handler.HandlerResolver;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,15 +24,15 @@ import java.util.Set;
  */
 public class HpaXRoadRiClient extends AbstractRiClient implements HpaXRoadClient {
 
-    private RovaAuthorizationService_Service rovaAuthorizationService = new RovaAuthorizationService_Service();
+    private final RovaAuthorizationService_Service rovaAuthorizationService = new RovaAuthorizationService_Service();
 
-    private RovaAuthorizationListService_Service rovaAuthorizationListService = new RovaAuthorizationListService_Service();
+    private final RovaAuthorizationListService_Service rovaAuthorizationListService = new RovaAuthorizationListService_Service();
 
-    private ObjectFactory factory = new ObjectFactory();
+    private final ObjectFactory factory = new ObjectFactory();
 
     private fi.vm.kapa.xml.rova.api.authorization.list.ObjectFactory authorizationListFactory = new fi.vm.kapa.xml.rova.api.authorization.list.ObjectFactory();
 
-    private XRoadClientConfig clientConfig;
+    private final XRoadClientConfig clientConfig;
 
     public HpaXRoadRiClient(XRoadClientConfig config) {
         this.clientConfig = config;
@@ -111,7 +112,7 @@ public class HpaXRoadRiClient extends AbstractRiClient implements HpaXRoadClient
         bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getNextEndpoint());
 
         Holder<fi.vm.kapa.xml.rova.api.authorization.list.Request> request = new Holder<>(authorizationListFactory.createRequest());
-        Holder<RovaAuthorizationListResponse> response = new Holder(authorizationListFactory.createRovaAuthorizationListResponse());
+        Holder<RovaAuthorizationListResponse> response = new Holder<>(authorizationListFactory.createRovaAuthorizationListResponse());
         request.value.setDelegateIdentifier(delegateId);
         request.value.setPrincipalIdentifier(principalId);
 
@@ -123,14 +124,16 @@ public class HpaXRoadRiClient extends AbstractRiClient implements HpaXRoadClient
         if (response.value != null) {
             authResult = response.value;
         }
-
         AuthorizationList auth;
-        if (authResult.getRoles().getRole() != null && authResult.getRoles().getRole().size() > 0) {
-            auth = new AuthorizationList(authResult.getRoles().getRole());
-        } else if (authResult.getRoles().getRole() != null && authResult.getRoles().getRole().size() == 0) {
-            auth = new AuthorizationList(new ArrayList<>());
-            for (fi.vm.kapa.xml.rova.api.authorization.list.DecisionReasonType reason : response.value.getReason()) {
-                auth.getReasons().add(new DecisionReason(reason.getRule(), reason.getValue(), null));
+        if (authResult != null && authResult.getRoles() != null && authResult.getRoles().getRole() != null) {
+            List<String> roles = authResult.getRoles().getRole();
+            if (!roles.isEmpty()) {
+                auth = new AuthorizationList(authResult.getRoles().getRole());
+            } else {
+                auth = new AuthorizationList(new ArrayList<>());
+                for (fi.vm.kapa.xml.rova.api.authorization.list.DecisionReasonType reason : response.value.getReason()) {
+                    auth.getReasons().add(new DecisionReason(reason.getRule(), reason.getValue(), null));
+                }
             }
         } else {
             String message = null;
