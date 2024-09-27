@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.17.1</version>
+            <version>2.17.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -34,7 +34,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
-            <version>5.2.3</version>
+            <version>5.3.1</version>
         </dependency>
         <!-- ws api -->
         <dependency>
@@ -46,15 +46,14 @@
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>oauth2-oidc-sdk</artifactId>
-            <version>11.12</version>
+            <version>11.19.1</version>
         </dependency>
         <!-- JWT -->
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
-            <version>9.39.1</version>
+            <version>9.41.1</version>
         </dependency>
-
         <!-- test deps -->
         <dependency>
             <groupId>junit</groupId>
@@ -65,14 +64,14 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>5.2.0</version>
+            <version>5.4.0</version>
             <scope>test</scope>
         </dependency>
         <!-- logging deps -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
+            <version>2.0.16</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

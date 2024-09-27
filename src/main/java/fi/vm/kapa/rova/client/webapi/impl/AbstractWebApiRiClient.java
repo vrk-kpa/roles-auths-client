@@ -81,7 +81,7 @@ public abstract class AbstractWebApiRiClient {
             Secret clientSecret = new Secret(config.getoAuthSecret());
             ClientAuthentication clientAuth = new ClientSecretBasic(clientID, clientSecret);
             URI tokenEndpoint = new URI(config.getTokenUrl());
-            TokenRequest request = new TokenRequest(tokenEndpoint, clientAuth, codeGrant);
+            TokenRequest request = new TokenRequest(tokenEndpoint, clientAuth, codeGrant, null);
             TokenResponse response = TokenResponse.parse(request.toHTTPRequest().send());
             if (!response.indicatesSuccess()) {
                 TokenErrorResponse errorResponse = response.toErrorResponse();
