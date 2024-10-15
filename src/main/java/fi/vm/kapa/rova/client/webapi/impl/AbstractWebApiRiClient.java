@@ -3,7 +3,6 @@ package fi.vm.kapa.rova.client.webapi.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.oauth2.sdk.*;
 import com.nimbusds.oauth2.sdk.auth.ClientAuthentication;
-import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic;
 import com.nimbusds.oauth2.sdk.auth.Secret;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
@@ -79,7 +78,7 @@ public abstract class AbstractWebApiRiClient {
             AuthorizationGrant codeGrant = new AuthorizationCodeGrant(code, callback);
             ClientID clientID = new ClientID(config.getClientId());
             Secret clientSecret = new Secret(config.getoAuthSecret());
-            ClientAuthentication clientAuth = new ClientSecretBasic(clientID, clientSecret);
+            ClientAuthentication clientAuth = new BasicClientSecret(clientID, clientSecret);
             URI tokenEndpoint = new URI(config.getTokenUrl());
             TokenRequest request = new TokenRequest(tokenEndpoint, clientAuth, codeGrant, null);
             TokenResponse response = TokenResponse.parse(request.toHTTPRequest().send());
